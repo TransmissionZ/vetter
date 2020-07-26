@@ -5,7 +5,7 @@ from django.contrib.auth.decorators import login_required
 # Create your views here.
 from django.http import HttpResponse
 
-@login_required(login_url='thenx:login')
+# For login required @login_required(login_url='thenx:login')
 def index(request):
     return HttpResponse("Welcome to the THENX APP.")
 
