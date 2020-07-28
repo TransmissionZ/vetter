@@ -2,7 +2,7 @@ from .settings import *
 import os
 
 
-DEBUG=False
+DEBUG = False
 TEMPLATE_DEBUG = DEBUG
 
 DATABASES = {
@@ -16,4 +16,4 @@ DATABASES = {
     }
 }
 
-STATIC_ROOT = '/home/TransmissionZ/vetter/thenxparser/static/'
+STATIC_ROOT = '/home/TransmissionZ/vetter/thenxparser/static'
