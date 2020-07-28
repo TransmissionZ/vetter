@@ -1,13 +1,16 @@
 from django.shortcuts import render, redirect
-from django.contrib.auth.forms import AuthenticationForm
+from django.contrib.auth.forms import AuthenticationForm as BaseAuthenticationForm
 from django.contrib.auth import login, logout
 from django.contrib.auth.decorators import login_required
 # Create your views here.
 from django.http import HttpResponse
+from .forms import AuthenticationForm
 
 # For login required @login_required(login_url='thenx:login')
 def index(request):
     return HttpResponse("Welcome to the THENX APP.")
+
+
 
 def login_view(request):
     if request.method == "POST":
