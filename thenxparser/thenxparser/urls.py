@@ -19,6 +19,6 @@ from django.urls import path, include
 admin.site.site_header = 'ThenXParser Administration'
 
 urlpatterns = [
-    path('thenx/', include('thenx.urls')),
+    path('', include('thenx.urls')),
     path('admin/', admin.site.urls),
 ]
