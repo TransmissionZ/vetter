@@ -25,7 +25,7 @@ SECRET_KEY = 'k!nbt7iah8pw_!o06my%jqx*n*)+72jhbjt)!-onqs@xn^b@6u'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["transmissionz.pythonanywhere.com/"]
 
 
 # Application definition
