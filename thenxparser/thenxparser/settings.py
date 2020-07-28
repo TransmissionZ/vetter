@@ -124,4 +124,4 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
-STATIC_ROOT = '/home/TransmissionZ/vetter/thenxparser/static'
+STATIC_ROOT = '/home/TransmissionZ/vetter/thenxparser/static/'
