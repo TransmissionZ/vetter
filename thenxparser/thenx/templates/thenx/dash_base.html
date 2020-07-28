@@ -50,7 +50,7 @@
                         <li>
                             <a href="#">
                                 <i class="fas fa-shopping-basket"></i>
-                                <span class="bot-line"></span>eCommerce</a>
+                                <span class="bot-line"></span>Shop</a>
                         </li>
                         <li>
                             <a href="#">
@@ -74,9 +74,15 @@
                                 <div class="info clearfix">
                                     <div class="content">
                                         <h5 class="name">
-                                            <a href="#">{{user.username}}</a>
+                                            <a href="{% url 'thenx:dashboard' %}">{{user.username}}</a>
                                         </h5>
-                                        <span class="email">{{user.email}}</span>
+                                        <span class="email">
+                                        {% if user.email %}
+                                            {{user.email}}
+                                        {% else %}
+                                            No Email Provided
+                                        {% endif %}
+                                        </span>
                                     </div>
                                 </div>
 

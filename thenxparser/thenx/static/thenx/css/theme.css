@@ -4,6 +4,7 @@
 Project:  CoolAdmin
 Version:	1.0
 Last change:	08/10/2018 [Add Define a table of contents Link]
+Assigned to:	Hau Nguyen
 Primary use:	Open Source
 -------------------------------------------------------------------*/
 /*------------------------------------------------------------------
@@ -1486,9 +1487,9 @@ section {
 }
 
 .account-dropdown .info .content {
-    margin-left: 65px;
-    padding: 11px 0;
-    padding-left: 12px;
+    margin-left: 15px;
+    padding: 5px 0;
+    padding-left: 8px;
 }
 
 .account-dropdown .info .content .name {
