@@ -31,3 +31,8 @@ def logout_view(request):
     if request.method == "POST":
         logout(request)
         return redirect('thenx')
+
+
+@login_required(login_url='thenx:login')
+def dash_view(request):
+    return render(request, 'thenx/dashboard.html', )
