@@ -1,89 +1,132 @@
-<!DOCTYPE html>
+{% load static %}
+
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>{% block title %} Dashboard {% endblock title %}</title>
-    {% block head_favicon %}
-            <link rel="icon" type="image/png"
-                  href="{{ STATIC_URL }}images/favicon.ico">
-        {% endblock head_favicon %}
-        {% block head_meta %}
-            {% block head_meta_charset %}
-                <meta http-equiv="Content-Type"
-                      content="text/html; charset=utf-8" />
-            {% endblock head_meta_charset %}
-            {% block head_meta_contentlanguage %}
-                <meta http-equiv="Content-Language" value="en-US" />
-            {% endblock head_meta_contentlanguage %}
-            {% block head_meta_viewport %}
-                <meta name="viewport"
-                      content="width=device-width, initial-scale=1.0">
-            {% endblock head_meta_viewport %}
-        {% endblock head_meta %}
-        {% block head_css %}
-            {% block head_css_site %}
-                <link href="{{ STATIC_URL }}css/bootstrap.min.css"
-                      rel="stylesheet" media="screen">
-                <link href="{{ STATIC_URL }}css/app.css"
-                      rel="stylesheet" media="screen">
-            {% endblock head_css_site %}
-            {% block head_css_section %}{% endblock head_css_section %}
-            {% block head_css_page %}{% endblock head_css_page %}
-        {% endblock head_css %}
+    <title>Dashboard -{% block title %} Home {% endblock title %}</title>
+    <!-- Fontfaces CSS-->
+    <link href="{% static 'thenx/css/font-face.css' %}" rel="stylesheet" media="all">
+    <link href="{% static 'thenx/vendor/font-awesome-4.7/css/font-awesome.min.css' %}" rel="stylesheet" media="all">
+    <link href="{% static 'thenx/vendor/font-awesome-5/css/fontawesome-all.min.css' %}" rel="stylesheet" media="all">
+    <link href="{% static 'thenx/vendor/mdi-font/css/material-design-iconic-font.min.css' %}" rel="stylesheet"
+          media="all">
+
+    <!-- Bootstrap CSS-->
+    <link href="{% static 'thenx/vendor/bootstrap-4.1/bootstrap.min.css' %}" rel="stylesheet" media="all">
+
+    <!-- Vendor CSS-->
+    <link href="{% static 'thenx/vendor/animsition/animsition.min.css' %}" rel="stylesheet" media="all">
+    <link href="{% static 'thenx/vendor/bootstrap-progressbar/bootstrap-progressbar-3.3.4.min.css' %}" rel="stylesheet"
+          media="all">
+    <link href="{% static 'thenx/vendor/wow/animate.css' %}" rel="stylesheet" media="all">
+    <link href="{% static 'thenx/vendor/css-hamburgers/hamburgers.min.css' %}" rel="stylesheet" media="all">
+    <link href="{% static 'thenx/vendor/slick/slick.css' %}" rel="stylesheet" media="all">
+    <link href="{% static 'thenx/vendor/select2/select2.min.css' %}" rel="stylesheet" media="all">
+    <link href="{% static 'thenx/vendor/perfect-scrollbar/perfect-scrollbar.css' %}" rel="stylesheet" media="all">
+
+    <!-- Main CSS-->
+    <link href="{% static 'thenx/css/theme.css' %}" rel="stylesheet" media="all">
 </head>
-<body>
-{# Navigation Menu #}
-    <header>
-        <div class="navbar navbar-default navbar-static-top
-        {% block nav-style %}{% endblock %}">
-            <div class="container p-none">
-                <div class="navbar-header">
-                    <button type="button" class="navbar-toggle"
-                            data-toggle="collapse"
-                            data-target=".navbar-collapse">
-                        <span class="icon-bar"></span>
-                        <span class="icon-bar"></span>
-                        <span class="icon-bar"></span>
-                    </button>
-                    <a class="navbar-brand" href="/">CRM Easy</a>
+<body class="animsition">
+<!--<p>Welcome to dash</p>-->
+<div class="page-wrapper">
+    <!-- HEADER DESKTOP-->
+    <header class="header-desktop3 d-none d-lg-block">
+        <div class="section__content section__content--p35">
+            <div class="header3-wrap">
+                <div class="header__logo">
+                    <a href="#">
+                        <img src="{% static 'thenx/logo.pn' %}" alt="THENX PARSER"/>
+                    </a>
                 </div>
-                <div class="collapse navbar-collapse">
-                    <ul class="nav navbar-nav navbar-right">
-                        {% if user.is_authenticated %}
-                            <li><a href="">Logout</a></li>
-                            <li><a href=""
-                                   class="p-r-none">Accounts</a></li>
-                        {% else %}
-                            <li><a href="">Login</a></li>
-                            <li><a href="" class="p-r-none">Sign Up</a></li>
-                        {% endif %}
+                <div class="header__navbar">
+                    <ul class="list-unstyled">
+                        <li>
+                            <a href="#">
+                                <i class="fas fa-tachometer-alt"></i>Dashboard
+                                <span class="bot-line"></span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#">
+                                <i class="fas fa-shopping-basket"></i>
+                                <span class="bot-line"></span>eCommerce</a>
+                        </li>
+                        <li>
+                            <a href="#">
+                                <i class="fas fa-trophy"></i>
+                                <span class="bot-line"></span>Products</a>
+                        </li>
+                        <li>
+                            <a href="#">
+                                <i class="fas fa-copy"></i>
+                                <span class="bot-line"></span>Rules</a>
+                        </li>
                     </ul>
+                </div>
+                <div class="header__tool">
+                    <div class="account-wrap">
+                        <div class="account-item account-item--style2 clearfix js-item-menu">
+                            <div class="content">
+                                <a class="js-acc-btn" href="#">{{user.username}}</a>
+                            </div>
+                            <div class="account-dropdown js-dropdown">
+                                <div class="info clearfix">
+                                    <div class="content">
+                                        <h5 class="name">
+                                            <a href="#">{{user.username}}</a>
+                                        </h5>
+                                        <span class="email">{{user.email}}</span>
+                                    </div>
+                                </div>
+
+                                <div class="account-dropdown__footer">
+                                    <form id='dash-logout' action="{% url 'thenx:logout' %}" method="POST">
+                                        {% csrf_token %}
+<!--                                        <input type="hidden" name="logout" value="{{ request.GET.next }}" />-->
+<!--                                        <input class="btn btn-primary btn-md my-2 p" type="submit" value="">-->
+                                        <a href="javascript:void(0);" onclick="document.getElementById('dash-logout').submit();">
+                                        <i class="zmdi zmdi-power"></i>Logout</a>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
     </header>
-    {# The Document Body #}
-    <div id="site-wrapper">
-        {% block content %}
-            if you see this, something is wrong!
-        {% endblock content %}
-    </div>
-    {# The Footer #}
-    <div class="footer">
-        <div class="container">
-            <p>Copyright ThenX Parser</p>
-        </div>
-    </div>
-</body>
 
-{% block footer_javascript %}
-{% block footer_javascript_site %}
-    <script src="{{ STATIC_URL }}js/jquery.min.js"></script>
-    <script src="{{ STATIC_URL }}js/bootstrap.min.js"></script>
-    <script src="{{ STATIC_URL }}js/app.js"></script>
-{% endblock footer_javascript_site %}
-{% block footer_javascript_section %}{% endblock footer_javascript_section %}
-{% block footer_javascript_page %}{% endblock footer_javascript_page %}
-{% endblock footer_javascript %}
+<p>!</p>
+    <p>!</p>
+    <p>!</p>
+    <p>!</p>
+    <p>!</p>
+    <p>!</p>
+</div>
+<!-- Jquery JS-->
+    <script src="{% static 'thenx/vendor/jquery-3.2.1.min.js' %}"></script>
+    <!-- Bootstrap JS-->
+    <script src="{% static 'thenx/vendor/bootstrap-4.1/popper.min.js' %}" ></script>
+    <script src="{% static 'thenx/vendor/bootstrap-4.1/bootstrap.min.js' %}" ></script>
+    <!-- Vendor JS       -->
+    <script src="{% static 'thenx/vendor/slick/slick.min.js' %}" >
+    </script>
+    <script src="{% static 'thenx/vendor/wow/wow.min.js' %}" ></script>
+    <script src="{% static 'thenx/vendor/animsition/animsition.min.js' %}" ></script>
+    <script src="{% static 'thenx/vendor/bootstrap-progressbar/bootstrap-progressbar.min.js' %} ">
+    </script>
+    <script src="{% static 'thenx/vendor/counter-up/jquery.waypoints.min.js' %}" ></script>
+    <script src="{% static 'thenx/vendor/counter-up/jquery.counterup.min.js' %}" >
+    </script>
+    <script src="{% static 'thenx/vendor/circle-progress/circle-progress.min.js' %}" ></script>
+    <script src="{% static 'thenx/vendor/perfect-scrollbar/perfect-scrollbar.js' %}" ></script>
+    <script src="{% static 'thenx/vendor/chartjs/Chart.bundle.min.js' %}" ></script>
+    <script src="{% static 'thenx/vendor/select2/select2.min.js' %}" >
+    </script>
+
+    <!-- Main JS-->
+    <script src="{% static 'thenx/js/main.js' %} "></script>
+</body>
 
 </html>
