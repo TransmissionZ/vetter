@@ -1,3 +1,4 @@
+from django.contrib.auth.models import User
 from django.shortcuts import render, redirect
 from django.contrib.auth.forms import AuthenticationForm as BaseAuthenticationForm
 from django.contrib.auth import login, logout
@@ -8,7 +9,7 @@ from .forms import AuthenticationForm
 
 # For login required @login_required(login_url='thenx:login')
 def index(request):
-    return HttpResponse("Welcome to the THENX APP.")
+    return redirect("thenx:login")
 
 
 
@@ -35,4 +36,10 @@ def logout_view(request):
 
 @login_required(login_url='thenx:login')
 def dash_view(request):
-    return render(request, 'thenx/dashboard.html', )
+    count = get_count_users() - 1
+    return render(request, 'thenx/dashboard.html', {
+        'count':count,
+        'list':[1,2,3]})
+
+def get_count_users():
+    return User.objects.count()

@@ -36,7 +36,7 @@
             <div class="header3-wrap">
                 <div class="header__logo">
                     <a href="#">
-                        <img src="{% static 'thenx/logo.pn' %}" alt="THENX PARSER"/>
+                        <img src="{% static 'thenx/dashlogo.png' %}" alt="THENX PARSER"/>
                     </a>
                 </div>
                 <div class="header__navbar">
@@ -103,12 +103,54 @@
         </div>
     </header>
 
-<p>!</p>
-    <p>!</p>
-    <p>!</p>
-    <p>!</p>
-    <p>!</p>
-    <p>!</p>
+    <!-- PAGE CONTENT-->
+    <div class="page-content--bgf7">
+        <!-- BREADCRUMB-->
+        <section class="au-breadcrumb2">
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="au-breadcrumb-content">
+                            <div class="au-breadcrumb-left">
+                                <span class="au-breadcrumb-span">You are here:</span>
+                                <ul class="list-unstyled list-inline au-breadcrumb__list">
+                                    <li class="list-inline-item active">
+                                        <a href="{% url 'thenx:dashboard' %}">Dashboard</a>
+                                    </li>
+                                    <li class="list-inline-item seprate">
+                                        <span>/</span>
+                                    </li>
+                                    <li class="list-inline-item">{% block nav %}Home{% endblock %}</li>
+                                </ul>
+                            </div>
+{#                        Search can be implemented if needed #}
+{#                            <form class="au-form-icon--sm" action="" method="post">#}
+{#                                <input class="au-input--w300 au-input--style2" type="text" placeholder="Search for products...">#}
+{#                                <button class="au-btn--submit2" type="submit">#}
+{#                                    <i class="zmdi zmdi-search"></i>#}
+{#                                </button>#}
+{#                            </form>#}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <!-- END BREADCRUMB-->
+
+{% block dashcontent %} {% endblock %}
+<!-- COPYRIGHT-->
+            <section class="p-t-60 p-b-20">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="copyright">
+                                <p>Copyright © 2020 THENX. All rights reserved.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            <!-- END COPYRIGHT-->
 </div>
 <!-- Jquery JS-->
     <script src="{% static 'thenx/vendor/jquery-3.2.1.min.js' %}"></script>
