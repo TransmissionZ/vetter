@@ -6,6 +6,8 @@ from django.contrib.auth.decorators import login_required
 # Create your views here.
 from django.http import HttpResponse
 from .forms import AuthenticationForm
+from datetime import datetime
+from django.core.paginator import Paginator
 
 # For login required @login_required(login_url='thenx:login')
 def index(request):
@@ -43,3 +45,23 @@ def dash_view(request):
 
 def get_count_users():
     return User.objects.count()
+
+@login_required(login_url='thenx:login')
+def products_view(request):
+    if request.method == "POST":
+        urldata = request.POST.dict()
+        url = urldata.get("url")
+        dateadded = datetime.now().strftime("%d/%m/%Y %H:%M")
+    list = [1,2,3,4,5,6,7,8,9,10,1,1,1,1,1,1,1]
+    paginator = Paginator(list, 10)
+    page = request.GET.get('page')
+    products = paginator.get_page(page)
+
+    return render(request, 'thenx/products.html', {
+        'count':2,
+        'list':products})
+
+@login_required(login_url='thenx:login')
+def deleteurl(request, urlid = None):
+    print(urlid)
+    return redirect('thenx:products')

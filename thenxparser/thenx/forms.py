@@ -5,7 +5,7 @@ from django.contrib.auth.forms import SetPasswordForm as BaseSetPasswordForm
 from django.contrib.auth.forms import UsernameField
 from django.contrib.auth import password_validation
 from django.utils.translation import gettext, gettext_lazy as _
-
+from django import forms
 
 class AuthenticationForm(BaseAuthenticationForm):
     username = UsernameField(widget=forms.TextInput(attrs={
