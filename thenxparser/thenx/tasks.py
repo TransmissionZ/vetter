@@ -1,18 +1,18 @@
 from __future__ import absolute_import, unicode_literals
 from celery import task
-from celery.schedules import crontab
-from celery.task import periodic_task
+# from celery.schedules import crontab
+# from celery.task import periodic_task
 import requests
 import json
 from django.utils import timezone
 from .models import Product
 from django.db.models import Count
 
-@periodic_task(
-    run_every=(crontab(minute='*/60')),
-    name="updatedb",
-    ignore_result=True
-)
+# @periodic_task(
+#     run_every=(crontab(minute='*/60')),
+#     name="updatedb",
+#     ignore_result=True
+# )
 def UpdateDB():
     # print("Updating Database")
     # p = Product(SKU=123, name="TEST NAME", price=1000.1, originalurl='www.thenx.com',
