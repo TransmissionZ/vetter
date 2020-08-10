@@ -5,129 +5,162 @@
 {% block nav %}Products {% endblock nav %}
 
 {% block dashcontent %}
-    {#    Search !!! #}
-    <form class="form-header" action="" method="POST" style="padding-left: 3.5%">
-        {% csrf_token %}
-        <input class="au-input au-input--xl" type="text" name="search" placeholder="Search for Products..." />
-        <button class="au-btn--submit" type="submit">
-            <i class="zmdi zmdi-search"></i>
-        </button>
-    </form>
-    <!-- DATA TABLE-->
-    <section class="p-t-20">
+    <div class="p-t-20">
         <div class="container">
-            {% for _ in list %}
-                <div class="col-md-6">
-                    <div class="card">
-                        <div class="card-header">
-                            <strong class="card-title">Apple Iphone SE2
-                                <small>
-                                    <span class="badge badge-success float-right mt-1">Price Changed</span>
-                                </small>
-                            </strong>
-                        </div>
-                        <div class="card-body">
-                            <p class="card-text">
-                                Brand: XYZ
-                                <br>
-                                Category: ABC
-                                <br>
-                                SKU: 123456
-                                <br>
-                                <br>
-                                <br>
-                            <h6>
-                                <del>Old Price: 1101$</del>
-                            </h6>
-                            <h5>New Price: 2000$</h5>
-                            </p>
-                        </div>
+            <div class="row">
+                <div class="col-md-12">
+                    <h3 class="title-5 m-b-35">All Products</h3>
+                </div>
+            </div>
+
+            {#    Search !!! #}
+            <div class="col-md-12">
+            <form class="row form-header" value="{{ request.GET.q }}" method="GET" style="padding-left: 1.1%">
+                <div class="row rs-select2--light rs-select2--md">
+                    <select class="js-select2 form-control" name="brand" id="selectbrand" onchange="this.form.submit()">
+                        <option value="All" ; {% if request.GET.brand == None %}selected{% endif %}>All Brands</option>
+                        {% for o in brands %}
+                            <option value="{{ o }}" {% if request.GET.brand == o %}selected{% endif %}>{{ o }}</option>
+                        {% endfor %}
+                    </select>
+                    <div class="dropDownSelect2"></div>
+                </div>
+                <div class="row col-md-12" style="padding-top: 5%; padding-left: 0">
+                    <input class="au-input au-input--xl" type="text" name="q" value="{{ request.GET.q }}" placeholder="Search for Products..."/>
+                    <button class="au-btn--submit" type="submit">
+                        <i class="zmdi zmdi-search"></i>
+                    </button>
+                </div>
+            </form>
+        </div>
+        <hr>
+        <!-- DATA TABLE-->
+        <br>
+        {% for p in list %}
+            <div class="row" style="padding-left: 1.1%">
+                <div class="card col-md-7">
+                    <div class="card-header">
+                        <strong class="card-title">{{ p.name }}
+                            <small>
+                                <span class="badge badge-success float-right mt-1">Price Changed</span>
+                            </small>
+                        </strong>
+                    </div>
+                    <div class="card-body">
+                        <p class="card-text">
+                            Brand: {{ p.brand }}
+                            <br>
+                            Last Updated: {{ p.dateupdated }}
+                            <br>
+                            SKU: {{ p.SKU }}
+                            <br>
+                            <br>
+                            <br>
+                        <h6>
+                            <del>Old Price: {{ p.price }} RON</del>
+                        </h6>
+                        <h5>New Price: {{ p.price }} RON</h5>
+                        </p>
                     </div>
                 </div>
-                <div class="row" style="padding-left: 1.1%">
-                    <div class="col-md-12">
-                        <h3 class="title-5 m-b-35">competitors</h3>
-                        <div class="table-data__tool">
-                            <div class="table-data__tool-right">
-                                <button data-toggle="collapse" data-target="#addurl{{ forloop.counter }}" aria-expanded="false" aria-controls="addurl{{ forloop.counter }}" class="au-btn au-btn-icon au-btn--green au-btn--small">
-                                    <i class="zmdi zmdi-plus"></i>add competitor
-                                </button>
-                                <div class="collapse" id="addurl{{ forloop.counter }}">
-                                    <br>
-{#                                    URL INPUT #}
-                                    <div class="row form-group">
-                                        <div class="col col-md-12">
-                                            <form id="addurlform{{ forloop.counter }}" method="post">
-                                                {% csrf_token %}
-                                                <div class="input-group">
-                                                    <input onblur="checkURL(this)"  type="url" id="url" name="url" placeholder="Competitor URL" class="form-control">
-                                                    &nbsp;
-                                                    <div class="input-group-btn">
-                                                        <button class="btn btn-primary" {# onClick="window.location.reload(); #}">Submit</button>
-                                                    </div>
+            </div>
+            <div class="row" style="">
+                <div class="col-md-12">
+                    <h3 class="title-5 m-b-35">competitors</h3>
+                    <div class="table-data__tool">
+                        <div class="table-data__tool-right">
+                            <button data-toggle="collapse" data-target="#addurl{{ forloop.counter }}"
+                                    aria-expanded="false" aria-controls="addurl{{ forloop.counter }}"
+                                    class="au-btn au-btn-icon au-btn--green au-btn--small">
+                                <i class="zmdi zmdi-plus"></i>add competitor
+                            </button>
+                            <div class="collapse" id="addurl{{ forloop.counter }}">
+                                <br>
+                                {#                                    URL INPUT #}
+                                <div class="row form-group">
+                                    <div class="col col-md-12">
+                                        <form id="addurlform{{ forloop.counter }}" method="post">
+                                            {% csrf_token %}
+                                            <div class="input-group">
+                                                <input onblur="checkURL(this)" type="url" id="url" name="url"
+                                                       placeholder="Competitor URL" class="form-control">
+                                                &nbsp;
+                                                <input type="hidden" name="product" class="form-control" value="{{ p.SKU }}">
+                                                <div class="input-group-btn">
+                                                    <button class="btn btn-primary">
+                                                        Submit
+                                                    </button>
                                                 </div>
-                                            </form>
-                                        </div>
+                                            </div>
+                                        </form>
                                     </div>
                                 </div>
                             </div>
-                        </div>
-                        <div class="table-responsive table-responsive-data2">
-                            <table class="table table-data3">
 
-                                <thead>
-                                <tr>
-                                    <th>SKU</th>
-                                    <th>Competitor</th>
-                                    <th>date added</th>
-                                    <th>status</th>
-                                    <th>last update</th>
-                                    <th>price</th>
-                                    <th></th>
-                                </tr>
-                                </thead>
-                                <tbody>
-                                <tr class="tr-shadow">
-                                    <td>123456</td>
-                                    <td>
-                                        <span class="block-email">Samsung A75 2020</span>
-                                    </td>
-                                    <td class="desc">Samsung A75 6gb 128gb</td>
-                                    <td>2018-09-27 02:12</td>
-                                    <td>
-                                        <span class="status--process">In Stock</span>
-                                    </td>
-                                    <td>$679.00</td>
-                                    <td>
-                                        <div class="table-data-feature">
-                                            <form action="{% url 'thenx:deleteurl' urlid=3%}" method="post">
-                                                {% csrf_token %}
-                                                <button class="item" data-toggle="tooltip" data-placement="top"
-                                                        title="Delete">
-                                                    <i class="zmdi zmdi-delete"></i>
-                                                </button>
-                                                {% if request.GET.next %}
-                                                    <input type="hidden" name="next" value="{{ request.GET.next }}">
-                                                {% endif %}
-                                            </form>
-                                        </div>
-                                    </td>
-                                </tr>
-                                <tr class="spacer"></tr>
-                            </table>
                         </div>
-                        <hr>
                     </div>
-                </div>
+                        <div class="table-responsive table-responsive-data2">
+                    {% if p.competitor_url_set.count != 0%}
+                        <table class="table table-data3">
 
-            {% endfor %}
-        </div>
-        </div>
-        </div>
+                        <thead>
+                        <tr>
+                            <th>SKU</th>
+                            <th>Competitor</th>
+                            <th>URL</th>
+                            {#                                <th>date added</th>#}
+                            <th>last update</th>
+                            <th>price</th>
+                            <th></th>
+                        </tr>
+                        </thead>
+                        <tbody>
+
+                        {% for comp in p.competitor_url_set.all %}
+                            <tr class="tr-shadow">
+                                <td>{{ p.SKU }}</td>
+                                <td>
+                                    <span class="block-email">{{ comp.comp_name }}</span>
+                                </td>
+                                <td class="desc">{{ comp.url }}</td>
+                                {#                                    <td></td>#}
+                                <td>
+                                    <span class="status--process">{{ comp.lastupdated }}</span>
+                                </td>
+                                <td>{{ comp.comp_price }}</td>
+                                <td>
+                                    <div class="table-data-feature">
+                                        <form action="{% url 'thenx:deleteurl' urlid=3 %}" method="post">
+                                            {% csrf_token %}
+                                            <button class="item" data-toggle="tooltip" data-placement="top"
+                                                    title="Delete">
+                                                <i class="zmdi zmdi-delete"></i>
+                                            </button>
+                                            {% if request.GET.next %}
+                                                <input type="hidden" name="next" value="{{ request.GET.next }}">
+                                            {% endif %}
+                                        </form>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr class="spacer"></tr>
+                        {% endfor %}
+
+                    </table>
+                    {% endif %}
+                    </div>
+                    <hr>
+                </div>
+            </div>
+
+        {% endfor %}
+    </div>
+    </div>
+    </div>
     </section>
     <!-- END DATA TABLE-->
     <div class="container col-md-12">
-    <div class="row justify-content-center">
+        <div class="row justify-content-center">
     <span class="step-links">
         {% if list.has_previous %}
             <a class="btn btn-dark pull-left" href="?page=1">&laquo; first</a>
@@ -143,16 +176,17 @@
             <a class="btn btn-dark float-right" href="?page={{ list.paginator.num_pages }}">last &raquo;</a>
         {% endif %}
     </span>
-</div>
+        </div>
 
-<script>
-function checkURL (abc) {
-  var string = abc.value;
-  if (!~string.indexOf("http")) {
-    string = "http://" + string;
-  }
-  abc.value = string;
-  return abc
-}
-</script>
+        <script>
+            function checkURL(abc) {
+                var string = abc.value;
+                if (!~string.indexOf("http")) {
+                    string = "http://" + string;
+                }
+                abc.value = string;
+                return abc
+            }
+        </script>
+    </div>
 {% endblock dashcontent %}

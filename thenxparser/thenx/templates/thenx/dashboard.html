@@ -27,8 +27,8 @@
             <div class="row">
                 <div class="col-md-6 col-lg-3">
                     <div class="statistic__item statistic__item--green">
-                        <h2 class="number">0</h2>
-                        <span class="desc">Total competitors</span>
+                        <h2 class="number">{{ totalc }}</h2>
+                        <span class="desc">Total competitor urls added</span>
                         <div class="icon">
                             <i class="zmdi zmdi-account-o"></i>
                         </div>
@@ -36,7 +36,7 @@
                 </div>
                 <div class="col-md-6 col-lg-3">
                     <div class="statistic__item statistic__item--orange">
-                        <h2 class="number">0</h2>
+                        <h2 class="number">{{ totalp }}</h2>
                         <span class="desc">total products</span>
                         <div class="icon">
                             <i class="zmdi zmdi-shopping-cart"></i>
@@ -45,8 +45,8 @@
                 </div>
                 <div class="col-md-6 col-lg-3">
                     <div class="statistic__item statistic__item--blue">
-                        <h2 class="number">{{ count }}</h2>
-                        <span class="desc">Out Of Stock</span>
+                        <h2 class="number">{{ comp }}</h2>
+                        <span class="desc">Total Competitors</span>
                         <div class="icon">
                             <i class="zmdi zmdi-calendar-note"></i>
                         </div>
@@ -69,34 +69,67 @@
         <div class="container">
             <div class="row">
                 <div class="col-md-12">
-                <h3 class="title-5 m-b-35">products summary</h3>
+                    <h3 class="title-5 m-b-35">products summary</h3>
                 </div>
             </div>
         </div>
     </section>
     <div class="row m-t-30">
         <div class="col-md-12">
+            <div class="table-data__tool-left" style="padding-left: 2%">
+                <div class="rs-select2--light rs-select2--md">
+                    <form value="{{ request.GET.brand }}" method="GET" id="brandform">
+                        <select class="js-select2 form-control" name="brand" id="selectbrand" onchange="this.form.submit()" >
+                            <option value="All"; {% if request.GET.brand == None %}selected{% endif %}>All Brands</option>
+                            {% for o in brands %}
+                                <option value="{{ o }}" {% if request.GET.brand == o %}selected{% endif %}>{{ o }}</option>
+                            {% endfor %}
+                        </select>
+                        <div class="dropDownSelect2"></div>
+                    </form>
+                </div>
+                <div class="table-data__tool-right">
+                    <form class="row form-header" value="{{ request.GET.q }}" method="GET"
+                          style="position:absolute; padding-right: 2%; right: 1%;">
+                        {#                    {% csrf_token %}#}
+                        <input class="au-input au-input--xl" type="text" name="q" value="{{ request.GET.q }}"
+                               placeholder="Search for Products..."/>
+                        <button class="au-btn--submit" type="submit">
+                            <i class="zmdi zmdi-search"></i>
+                        </button>
+                    </form>
+                </div>
+            </div>
+            <br>
+            <br>
+            <br>
             <!-- DATA TABLE-->
             <div class="table-responsive m-b-40">
                 <table class="table table-borderless table-data3">
                     <thead>
-                        <tr>
-                            <th>date</th>
-                            <th>type</th>
-                            <th>description</th>
-                            <th>status</th>
-                            <th>price</th>
-                        </tr>
+                    <tr>
+                        <th>SKU</th>
+                        <th>Name</th>
+                        <th>Brand</th>
+                        <th>Competitors</th>
+                        <th>price</th>
+                        <th>Date Updated</th>
+                    </tr>
                     </thead>
                     <tbody>
+                    {% for p in list %}
                         <tr>
-                            <td>2018-09-29 05:57</td>
-                            <td>Mobile</td>
-                            <td>iPhone X 64Gb Grey</td>
-                            <td class="process">Processed</td>
-                            <td>$999.00</td>
+                            <td>{{ p.SKU }}</td>
+                            <td><a href="{{ p.originalurl }}">{{ p.name }}</a></td>
+                            <td>{{ p.brand }}</td>
+                            <td class="process">
+                                {% for c in p.competitor_url_set.all %} {{ c.comp_name }}
+                                    {% if p.competitor_url_set.count != forloop.counter %},{% endif %}{% endfor %}
+                            </td>
+                            <td>{{ p.price }}</td>
+                            <td>{{ p.dateupdated }}</td>
                         </tr>
-
+                    {% endfor %}
                     </tbody>
                 </table>
             </div>

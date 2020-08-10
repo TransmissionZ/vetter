@@ -1,2 +1,4 @@
 django=3.0.8
 mysqlclient
+pycurl #with sudo apt install libcurl4-openssl-dev libssl-dev
+celery

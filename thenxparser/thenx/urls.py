@@ -12,5 +12,5 @@ urlpatterns = [
     path('logout/', views.logout_view, name='logout'),
     path('dashboard/', views.dash_view, name='dashboard'),
     path('dashboard/products/', views.products_view, name='products'),
-    path('dashboard/products/delete/(?P<urlid>\d+)/$', views.deleteurl, name='deleteurl'),
+    path('dashboard/products/delete/(<urlid>)/', views.deleteurl, name='deleteurl'),
 ]
