@@ -46,7 +46,7 @@ def dash_view(request):
     totalp = Product.objects.count()
     totalc = Competitor_URL.objects.count()
     comp = Competitor_URL.objects.order_by('comp_name').distinct().count()
-    #UpdateDB()
+    UpdateDB()
     brands = Product.objects.order_by("brand").values_list("brand", flat=True).distinct()
     if request.method == 'GET':
         if 'q' in request.GET:
