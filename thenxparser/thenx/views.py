@@ -29,7 +29,7 @@ def login_view(request):
             else:
                 return redirect('thenx:dashboard')
     else:
-        # form = AuthenticationForm()
+        form = AuthenticationForm()
         if request.user.is_authenticated:
             return redirect('thenx:dashboard')
 
