@@ -75,26 +75,26 @@ WSGI_APPLICATION = 'thenxparser.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/3.0/ref/settings/#databases
 
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.mysql',
-#         'NAME': 'thenx', #os.path.join(BASE_DIR, 'thenxappMariaDB'),
-#         'USER': 'thenxdefault',
-#         'PASSWORD': 'thenx011',
-#         'HOST': '',
-#         'PORT': '',
-#     }
-# }
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'TransmissionZ$thenx', #os.path.join(BASE_DIR, 'thenxappMariaDB'),
-        'USER': 'TransmissionZ',
+        'NAME': 'thenx', #os.path.join(BASE_DIR, 'thenxappMariaDB'),
+        'USER': 'thenxdefault',
         'PASSWORD': 'thenx011',
-        'HOST': 'TransmissionZ.mysql.pythonanywhere-services.com',
+        'HOST': '',
         'PORT': '',
     }
 }
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.mysql',
+#         'NAME': 'TransmissionZ$thenx', #os.path.join(BASE_DIR, 'thenxappMariaDB'),
+#         'USER': 'TransmissionZ',
+#         'PASSWORD': 'thenx011',
+#         'HOST': 'TransmissionZ.mysql.pythonanywhere-services.com',
+#         'PORT': '',
+#     }
+# }
 
 
 # Password validation

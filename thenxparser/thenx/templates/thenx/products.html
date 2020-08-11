@@ -130,14 +130,15 @@
                                 <td>{{ comp.comp_price }}</td>
                                 <td>
                                     <div class="table-data-feature">
-                                        <form action="{% url 'thenx:deleteurl' urlid=3 %}" method="post">
+                                        <form action="{% url 'thenx:deleteurl' urlid=comp.pk %}" method="post">
                                             {% csrf_token %}
                                             <button class="item" data-toggle="tooltip" data-placement="top"
                                                     title="Delete">
                                                 <i class="zmdi zmdi-delete"></i>
                                             </button>
-                                            {% if request.GET.next %}
-                                                <input type="hidden" name="next" value="{{ request.GET.next }}">
+                                            {% if request.GET.brand and request.GET.q %}
+                                                <input type="hidden" name="brand" value="{{ request.GET.brand }}">
+                                                <input type="hidden" name="q" value="{{ request.GET.q }}">
                                             {% endif %}
                                         </form>
                                     </div>

@@ -11,6 +11,8 @@ from django.core.paginator import Paginator
 from .models import Product, Competitor_URL
 from .tasks import UpdateDB
 from django.db.models import Q, Count
+from django.http import HttpResponseRedirect
+from django.urls import reverse
 
 # For login required @login_required(login_url='thenx:login')
 def index(request):
@@ -46,7 +48,7 @@ def dash_view(request):
     totalp = Product.objects.count()
     totalc = Competitor_URL.objects.count()
     comp = Competitor_URL.objects.order_by('comp_name').distinct().count()
-    UpdateDB()
+    #UpdateDB()
     brands = Product.objects.order_by("brand").values_list("brand", flat=True).distinct()
     if request.method == 'GET':
         if 'q' in request.GET:
@@ -81,31 +83,30 @@ def products_view(request):
     if request.method == "POST":
         urldata = request.POST.dict()
         url = urldata.get("url")
-        print(urldata)
+        p = urldata.get("product")
+        p = Product.objects.filter(SKU=p).first()
+        p.competitor_url_set.create(url=url)
+        print(p.competitor_url_set.all())
         #dateadded = datetime.now().strftime("%d/%m/%Y %H:%M")
-        queryflag = False
+        queryflag1 = False
+        queryflag2 = False
         if 'q' in request.GET:
             query = request.GET.get('q')
-            if query != '':
-                plist = Product.objects.filter(Q(SKU__icontains=query)|Q(name__icontains=query)|Q(brand__icontains=query))
-                queryflag = True
-            else:
-                plist = Product.objects.all()
+            queryflag1 = True
+        else:
+            query = ''
 
         if 'brand' in request.GET:
             bquery = request.GET.get('brand')
-            if bquery != 'All' and bquery != None:
-                if queryflag:
-                    plist = Product.objects.filter((
-                        Q(SKU__icontains=query) | Q(name__icontains=query) | Q(brand__icontains=query)) & (Q(brand__icontains=bquery)) )
-                else:
-                    plist = Product.objects.filter(Q(brand__icontains=bquery))
+            queryflag2 = True
+        else:
+            bquery = 'All'
 
-            else:
-                if queryflag:
-                    pass
-                else:
-                    plist = Product.objects.all()
+        if queryflag1 or queryflag2:
+            return HttpResponseRedirect('./' + '?brand=' + str(bquery) + '&' + 'q=' + str(query))
+        else:
+            return redirect('thenx:products')
+
     if request.method == "GET":
         queryflag = False
         if 'q' in request.GET:
@@ -143,6 +144,9 @@ def products_view(request):
 
 @login_required(login_url='thenx:login')
 def deleteurl(request, urlid = None):
-    print(urlid)
+    Competitor_URL.objects.filter(pk=urlid).delete()
+    dict = request.POST.dict()
+    if 'brand' in request.POST and 'q' in request.POST:
+        return HttpResponseRedirect(reverse('thenx:products') + "?brand=" + dict.get('brand') + "&q=" + dict.get('q'))
     return redirect('thenx:products')
 

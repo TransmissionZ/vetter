@@ -1,6 +1,6 @@
 from __future__ import absolute_import, unicode_literals
-# from celery.schedules import crontab
-# from celery.task import periodic_task
+from celery.schedules import crontab
+from celery.task import periodic_task
 import requests
 import json
 from django.utils import timezone
