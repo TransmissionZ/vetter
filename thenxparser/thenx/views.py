@@ -13,7 +13,8 @@ from .tasks import UpdateDB
 from django.db.models import Q, Count
 from django.http import HttpResponseRedirect
 from django.urls import reverse
-
+from django.contrib import messages
+from datetime import timedelta
 # For login required @login_required(login_url='thenx:login')
 def index(request):
     return redirect("thenx:login")
@@ -47,9 +48,12 @@ def logout_view(request):
 def dash_view(request):
     totalp = Product.objects.count()
     totalc = Competitor_URL.objects.count()
-    comp = Competitor_URL.objects.order_by('comp_name').distinct().count()
+    comp = Competitor_URL.objects.order_by('comp_name').values_list("comp_name", flat=True).distinct().count()
     #UpdateDB()
     brands = Product.objects.order_by("brand").values_list("brand", flat=True).distinct()
+    delta = datetime.now() - timedelta(days=1)
+    recentlychanged = Product.objects.filter(dateupdated__gte=delta).count()
+    print(recentlychanged)
     if request.method == 'GET':
         if 'q' in request.GET:
             query = request.GET.get('q')
@@ -71,7 +75,8 @@ def dash_view(request):
         'totalc':totalc,
         'comp':comp,
         'list':plist,
-        'brands':brands,})
+        'brands':brands,
+        'recentlychanged':recentlychanged})
 
 def get_count_users():
     return User.objects.count()
@@ -85,7 +90,11 @@ def products_view(request):
         url = urldata.get("url")
         p = urldata.get("product")
         p = Product.objects.filter(SKU=p).first()
-        p.competitor_url_set.create(url=url)
+        if p.competitor_url_set.filter(url=url).count() == 0:
+            c = p.competitor_url_set.create(url=url)
+            c.scrap()
+        else:
+            messages.error(request, "This URL Already Exists")
         print(p.competitor_url_set.all())
         #dateadded = datetime.now().strftime("%d/%m/%Y %H:%M")
         queryflag1 = False
@@ -150,3 +159,16 @@ def deleteurl(request, urlid = None):
         return HttpResponseRedirect(reverse('thenx:products') + "?brand=" + dict.get('brand') + "&q=" + dict.get('q'))
     return redirect('thenx:products')
 
+@login_required()
+def set_imp(request):
+    sku = None
+    if request.method == "GET":
+        sku = request.GET.get('pk')
+        chk = request.GET.get('chk')
+
+    if sku and chk:
+        ob = Product.objects.filter(SKU__exact=sku).first()
+        ob.important = chk
+        ob.save()
+
+    return redirect('thenx:products')

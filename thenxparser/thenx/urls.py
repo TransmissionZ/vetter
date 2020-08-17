@@ -13,4 +13,5 @@ urlpatterns = [
     path('dashboard/', views.dash_view, name='dashboard'),
     path('dashboard/products/', views.products_view, name='products'),
     path('dashboard/products/delete/(<urlid>)/', views.deleteurl, name='deleteurl'),
+    path('dashboard/products/setimp', views.set_imp, name='setimp')
 ]

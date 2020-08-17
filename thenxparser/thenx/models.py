@@ -2,6 +2,7 @@ from django.db import models
 import re
 from datetime import datetime
 from django.utils import timezone
+from .scrappers import *
 # Create your models here.
 
 class Product(models.Model):
@@ -11,6 +12,7 @@ class Product(models.Model):
     brand = models.TextField()
     originalurl = models.TextField()
     dateupdated = models.DateTimeField()
+    important = models.BooleanField(default=False)
 
     def update_price(self, price):
         self.price = price
@@ -40,6 +42,19 @@ class Competitor_URL(models.Model):
 
     def __str__(self):
         return self.comp_name
+
+    def scrap(self):
+        if 'gsmnet.ro' in self.url:
+            ob = gsmnet(self.url)
+        elif 'sepmobile.ro' in self.url:
+            ob = sepmobile(self.url)
+
+        price = ob.scrap()
+        self.comp_price = price
+        print(self.comp_price)
+        self.save()
+
+
 
     def save(self, *args, **kwargs):
         self.lastupdated = timezone.now()

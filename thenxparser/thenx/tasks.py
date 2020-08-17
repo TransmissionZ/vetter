@@ -6,6 +6,8 @@ import json
 from django.utils import timezone
 from .models import Product
 from django.db.models import Count
+from bs4 import BeautifulSoup as soup
+
 
 # @periodic_task(
 #     run_every=(crontab(minute='*/60')),
@@ -58,3 +60,4 @@ def UpdateDB():
             #print(timezone.now().strftime('%Y-%m-%d %H:%M'))
             p = Product(SKU=product['sku'], name=product['name'], price=price, brand=product['brand'], originalurl=product['url'])
             p.save()
+
