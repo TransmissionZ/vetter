@@ -44,10 +44,15 @@ class Competitor_URL(models.Model):
         return self.comp_name
 
     def scrap(self):
+        ob = None
         if 'gsmnet.ro' in self.url:
             ob = gsmnet(self.url)
         elif 'sepmobile.ro' in self.url:
             ob = sepmobile(self.url)
+        elif 'sunex.ro' in self.url:
+            ob = sunex(self.url)
+        elif 'conectshop.ro' in self.url:
+            ob = conectshop(self.url)
 
         price = ob.scrap()
         self.comp_price = price
@@ -59,13 +64,16 @@ class Competitor_URL(models.Model):
     def save(self, *args, **kwargs):
         self.lastupdated = timezone.now()
         try:
-            n = re.findall(r'(?<=\.)([^.]+)(?:\.(?:co\.uk|ac\.us|[^.]+(?:$|\n)))', self.url)
-            self.comp_name = n[0]
+            if 'www' in self.url:
+                n = re.findall(r'(?<=\.)([^.]+)(?:\.(?:co\.uk|ac\.us|[^.]+(?:$|\n)))', self.url)
+                self.comp_name = n[0]
+            else:
+                raise Exception
         except Exception as e:
             n = self.url.find('/')
             if n < 8:
                 n1 = self.url.find('.')
-                self.comp_name = self.url[n+1:n1]
+                self.comp_name = self.url[n+2:n1]
             else:
                 n1 = self.url.find('.')
                 self.comp_name = self.url[:n1]
