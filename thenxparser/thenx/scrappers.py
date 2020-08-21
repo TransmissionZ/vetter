@@ -111,3 +111,182 @@ class conectshop():
             else:
                 continue
 
+class magazingsm():
+    price = 0
+    def __init__(self, url):
+        self.url = url
+        print("Grabbing value")
+
+    def scrap(self):
+        count = 0
+        while True:
+            count += 1
+            if count == 3:
+                return 0.0
+            try:
+                response = requests.get(self.url)
+                if response.status_code != 200:
+                    print(response.status_code)
+                    continue
+                s = soup(response.text, 'html.parser')
+                p = s.find('span', class_='price').text
+                p = p.replace(',', '.').replace('RON', '').replace('LEI', '').replace('Lei', '').strip()
+                return float(p)
+            except Exception as e:
+                print(e)
+                continue
+
+class protableta():
+    price = 0
+    def __init__(self, url):
+        self.url = url
+        print("Grabbing value")
+
+    def scrap(self):
+        count = 0
+        while True:
+            count += 1
+            if count == 3:
+                return 0.0
+            try:
+                response = requests.get(self.url)
+                if response.status_code != 200:
+                    print(response.status_code)
+                    continue
+                s = soup(response.text, 'html.parser')
+                p = s.find('span', class_='price').text
+                p = p.replace(',', '.').replace('RON', '').replace('LEI', '').replace('lei', '').replace('Lei', '').strip()
+                return float(p)
+            except Exception as e:
+                print(e)
+                continue
+
+class powerlaptop():
+    price = 0
+    def __init__(self, url):
+        self.url = url
+        print("Grabbing value")
+
+    def scrap(self):
+        count = 0
+        while True:
+            count += 1
+            if count == 3:
+                return 0.0
+            try:
+                response = requests.get(self.url)
+                if response.status_code != 200:
+                    print(response.status_code)
+                    continue
+                s = soup(response.text, 'html.parser')
+                p = s.find('em', class_='ProductPrice').text
+                p = p.replace(',', '.').replace('RON', '').replace('LEI', '').replace('lei', '').replace('Lei', '').strip()
+                return float(p)
+            except Exception as e:
+                print(e)
+                continue
+
+class servicepack():
+    price = 0
+    def __init__(self, url):
+        self.url = url
+        print("Grabbing value")
+
+    def scrap(self):
+        count = 0
+        while True:
+            count += 1
+            if count == 3:
+                return 0.0
+            try:
+                response = requests.get(self.url)
+                if response.status_code != 200:
+                    print(response.status_code)
+                    continue
+                s = soup(response.text, 'html.parser')
+                p = s.find('p', class_='price').text
+                p = p.replace(',', '.').replace('RON', '').replace('LEI', '').replace('lei', '').replace('Lei', '').strip()
+                return float(p)
+            except Exception as e:
+                print(e)
+                continue
+
+class distrizone():
+    price = 0
+    def __init__(self, url):
+        self.url = url
+        print("Grabbing value")
+
+    def scrap(self):
+        count = 0
+        while True:
+            count += 1
+            if count == 3:
+                return 0.0
+            try:
+                response = requests.get(self.url)
+                if response.status_code != 200:
+                    print(response.status_code)
+                    continue
+                s = soup(response.text, 'html.parser')
+                p = s.find('span', class_='fPrice').text
+                p = p.replace(',', '.').replace('RON', '').replace('LEI', '').replace('lei', '').replace('Lei', '').strip()
+                n = p.count('.')
+                if n == 2:
+                    print('reached')
+                    p = p.replace('.', '', 1)
+
+                return float(p)
+            except Exception as e:
+                print(e)
+                continue
+
+class mokagsm():
+    price = 0
+    def __init__(self, url):
+        self.url = url
+        print("Grabbing value")
+
+    def scrap(self):
+        count = 0
+        while True:
+            count += 1
+            if count == 3:
+                return 0.0
+            try:
+                response = requests.get(self.url)
+                if response.status_code != 200:
+                    print(response.status_code)
+                    continue
+                s = soup(response.text, 'html.parser')
+                p = s.find('span', class_='fPrice').text
+                p = p.replace(',', '.').replace('RON', '').replace('LEI', '').replace('lei', '').replace('Lei', '').strip()
+                return float(p)
+            except Exception as e:
+                print(e)
+                continue
+
+class inowgsm():
+    price = 0
+    def __init__(self, url):
+        self.url = url
+        print("Grabbing value")
+
+    def scrap(self):
+        count = 0
+        while True:
+            count += 1
+            if count == 3:
+                return 0.0
+            try:
+                response = requests.get(self.url)
+                if response.status_code != 200:
+                    print(response.status_code)
+                    continue
+                s = soup(response.text, 'html.parser')
+                p = s.find('div', class_='price-group')('div')[0].text
+                p = p.replace(',', '.').replace('RON', '').replace('LEI', '').replace('lei', '').replace('Lei', '').strip()
+                return float(p)
+            except Exception as e:
+                print(e)
+                continue

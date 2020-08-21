@@ -1,0 +1,15 @@
+{% extends 'thenx/dash_base.html' %}
+
+{% block title %} Rules
+{% endblock title %}
+
+{% block nav %}Rules {% endblock nav %}
+
+{% block dashcontent %}
+{#    <button type="button" href="" class="btn btn-primary btn-lg btn-block">Primary</button>#}
+    <button type="button" class="btn btn-primary btn-lg btn-block"><a href="{% url 'thenx:parserrules' %}" style="color: white">Competitors Parser Rules</a></button>
+    <button type="button" class="btn btn-success btn-lg btn-block"><a href="{% url 'thenx:pricelistrules' %}" style="color: white">ThenX Price List Rules</a></button>
+    <button type="button" class="btn btn-warning btn-lg btn-block"><a href="{% url 'thenx:marginsrules' %}" style="color: white">Margin Rules</a></button>
+    <button type="button" class="btn btn-danger btn-lg btn-block"><a href="{% url 'thenx:vatrules' %}" style="color: white">Set VAT</a></button>
+    <button type="button" class="btn btn-dark btn-lg btn-block"><a href="{% url 'thenx:warrantyrules' %}" style="color: white">Warranty</a></button>
+{% endblock dashcontent %}

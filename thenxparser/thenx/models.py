@@ -53,7 +53,22 @@ class Competitor_URL(models.Model):
             ob = sunex(self.url)
         elif 'conectshop.ro' in self.url:
             ob = conectshop(self.url)
-
+        elif 'magazingsm.ro' in self.url:
+            ob = magazingsm(self.url)
+        elif 'protableta.ro' in self.url:
+            ob = protableta(self.url)
+        elif 'powerlaptop.ro' in self.url:
+            ob = powerlaptop(self.url)
+        elif 'servicepack.ro' in self.url:
+            ob = servicepack(self.url)
+        elif 'distrizone.ro' in self.url:
+            ob = distrizone(self.url)
+        elif 'moka-gsm.ro' in self.url:
+            ob = mokagsm(self.url)
+        elif 'inowgsm.ro' in self.url:
+            ob = inowgsm(self.url)
+        else:
+            print("BRAND NOT AVAILABLE FOR " + str(self.url))
         price = ob.scrap()
         self.comp_price = price
         print(self.comp_price)
@@ -65,8 +80,15 @@ class Competitor_URL(models.Model):
         self.lastupdated = timezone.now()
         try:
             if 'www' in self.url:
-                n = re.findall(r'(?<=\.)([^.]+)(?:\.(?:co\.uk|ac\.us|[^.]+(?:$|\n)))', self.url)
-                self.comp_name = n[0]
+                if 'powerlaptop.ro' in self.url:
+                    self.comp_name = 'powerlaptop'
+                elif 'distrizone.ro' in self.url:
+                    self.comp_name = 'distrizone'
+                elif 'moka-gsm.ro' in self.url:
+                    self.comp_name = 'moka-gsm'
+                else:
+                    n = re.findall(r'(?<=\.)([^.]+)(?:\.(?:co\.uk|ac\.us|[^.]+(?:$|\n)))', self.url)
+                    self.comp_name = n[0]
             else:
                 raise Exception
         except Exception as e:

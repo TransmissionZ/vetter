@@ -119,7 +119,7 @@
                     <tbody>
                     {% for p in list %}
                         <tr>
-                            <td>{{ p.SKU }}</td>
+                            <td><a href="{% url 'thenx:specificproduct' p.SKU %}" style="color: grey">{{ p.SKU }}</a></td>
                             <td><a href="{{ p.originalurl }}">{{ p.name }}</a></td>
                             <td>{{ p.brand }}</td>
                             <td class="process">

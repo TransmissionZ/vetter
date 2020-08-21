@@ -172,3 +172,31 @@ def set_imp(request):
         ob.save()
 
     return redirect('thenx:products')
+
+def redirecttoproduct(request, sku):
+    return HttpResponseRedirect('./' + '?brand=All' + '&' + 'q=' + sku)
+
+@login_required()
+def rules_view(request):
+    totalcomps = [_ for _ in range(Competitor_URL.objects.order_by('comp_name').values_list("comp_name", flat=True).distinct().count())]
+    return render(request, 'thenx/rules.html', {'totalcomps':totalcomps})
+
+def rules_parser(request):
+
+    return render(request, 'thenx/rules_parser.html', )
+
+def rules_price_list(request):
+
+    return render(request, 'thenx/rules_pricelist.html', )
+
+def rules_margins(request):
+
+    return render(request, 'thenx/rules_margin.html', )
+
+def rules_vat(request):
+
+    return render(request, 'thenx/rules_vat.html', )
+
+def rules_warranty(request):
+
+    return render(request, 'thenx/rules_warranty.html', )
