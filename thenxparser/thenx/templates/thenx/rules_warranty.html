@@ -6,5 +6,22 @@
 {% block nav %}Warranty Rules {% endblock nav %}
 
 {% block dashcontent %}
-
+    <form method="post">
+        <div class="row form-group col-md-16">
+            <label for="selectSm3" class="form-control-label" style="padding-left: 1.4%">Set Warranty</label>
+            <div class="col col-sm-2">
+                <input type="text" id="input-small" name="input-small" placeholder="Warranty in Days"
+                       class="input-sm form-control-sm form-control">
+            </div>
+            <label for="selectSm2" class="form-control-label">For</label>
+            <div class="col-8 col-md-2">
+                <select name="selectSm2" id="SelectLm2" class="form-control-sm form-control">
+                    <option value="0">select</option>
+                    <option value="1">Supplier</option>
+                    <option value="2">Category</option>
+                    <option value="2">Product SKU</option>
+                </select>
+            </div>
+        </div>
+    </form>
 {% endblock dashcontent %}

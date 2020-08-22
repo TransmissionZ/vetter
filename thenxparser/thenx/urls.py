@@ -20,5 +20,6 @@ urlpatterns = [
     path('dashboard/rules/margins', views.rules_margins, name='marginsrules'),
     path('dashboard/rules/vat', views.rules_vat, name='vatrules'),
     path('dashboard/rules/warranty', views.rules_warranty, name='warrantyrules'),
-    path('dashboard/rules/', views.rules_view, name='rules')
+    path('dashboard/rules/', views.rules_view, name='rules'),
+    path('rules/getDetails/', views.getDetails, name='details')
 ]

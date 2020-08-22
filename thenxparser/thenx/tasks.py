@@ -15,7 +15,7 @@ from bs4 import BeautifulSoup as soup
 #     ignore_result=True
 # )
 def UpdateDB():
-    # print("Updating Database")
+    print("Updating Database")
     # p = Product(SKU=123, name="TEST NAME", price=1000.1, originalurl='www.thenx.com',
     #             dateupdated=timezone.now())
     # p.save()
@@ -51,13 +51,21 @@ def UpdateDB():
                 p.name = product['name']
             if p.brand != product['brand']:
                 p.brand = product['brand']
+            if p.category != json.loads(product['cat']):
+                p.category = json.loads(product['cat'])
+            if p.supplier != product['supplier']:
+                p.supplier = product['supplier']
+            if p.base_cost != product['cost']:
+                p.base_cost = product['cost']
             p.save()
         else:
             price = product['price']
             if price == None or str(price) == 'nan':
                 price = 0.0
-
-            #print(timezone.now().strftime('%Y-%m-%d %H:%M'))
-            p = Product(SKU=product['sku'], name=product['name'], price=price, brand=product['brand'], originalurl=product['url'])
+            cost = product['cost']
+            if cost == None or str(cost) == 'nan':
+                cost = 0.0
+            p = Product(SKU=product['sku'], name=product['name'], price=price, brand=product['brand'], originalurl=product['url'],
+                        category=json.loads(product['cat']), supplier=product['supplier'], base_cost=cost)
             p.save()
 

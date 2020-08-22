@@ -6,5 +6,131 @@
 {% block nav %}Margin Rules {% endblock nav %}
 
 {% block dashcontent %}
+    <form method="post">
+        <div class="row form-group col-md-16">
+            <label class="form-control-label" style="padding-left: 1.4%">Rule 1: Add whole sale price
+                :</label>
 
+{#            <div class="col col-sm-2">#}
+{#                <input type="text" id="wholesaleprice" name="input-small" placeholder="whole-sale price"#}
+{#                       class="input-sm form-control-sm form-control">#}
+{#            </div>#}
+
+{#            <label class="form-control-label">set</label>#}
+            <div class="col col-sm-2">
+                <input type="text" id="additional" name="input-small" placeholder="additional"
+                       class="input-sm form-control-sm form-control">
+            </div>
+
+
+            <div class="col-8 col-md-1">
+                <select id="type" class="form-control-sm form-control">
+                    <option value="0">Type</option>
+                    <option value="1">RON</option>
+                    <option value="2">%</option>
+                </select>
+            </div>
+
+            <label for="selectSm2" class="form-control-label">for:</label>
+
+
+            <div class="col-8 col-md-1">
+                <select name="selectSm2" id="selection" class="form-control-sm form-control">
+                    <option value="0">select</option>
+                    <option value="sup">Supplier</option>
+                    <option value="cat">Category</option>
+                    <option value="sku">Product SKU</option>
+                </select>
+            </div>
+
+            <div class="col-8 col-md-2" id="supcatdiv" style="display: none">
+                <select name="selectSm2" id="supcat" class="form-control-sm form-control">
+                </select>
+            </div>
+            <div class="col col-sm-1" id="skuinput" style="display: none">
+                <input type="text"  placeholder="RON / %"
+                       class="input-sm form-control-sm form-control">
+            </div>
+
+        </div>
+
+        <button type="button" class="col-md-12 btn btn-outline-success btn-sm" style="right: 0%">
+            <i class="fa fa-magic"></i>&nbsp; Add rule
+        </button>
+    </form>
+    <hr>
+    <form method="post">
+        <div class="row form-group col-md-16">
+            <label for="selectSm" class="form-control-label" style="padding-left: 1.4%">Rule 2: Add retail price
+                :</label>
+
+            <div class="col col-sm-2">
+                <input type="text" id="input-small" name="input-small" placeholder="retail price"
+                       class="input-sm form-control-sm form-control">
+            </div>
+
+            <label for="selectSm2" class="form-control-label">set</label>
+            <div class="col col-sm-2">
+                <input type="text" id="input-small" name="input-small" placeholder="additional"
+                       class="input-sm form-control-sm form-control">
+            </div>
+
+
+            <div class="col-8 col-md-1">
+                <select name="selectSm2" id="SelectLm2" class="form-control-sm form-control">
+                    <option value="0">Type</option>
+                    <option value="1">RON</option>
+                    <option value="2">%</option>
+                </select>
+            </div>
+
+            <label for="selectSm2" class="form-control-label">for:</label>
+
+
+            <div class="col-8 col-md-1">
+                <select name="selectSm2" id="SelectLm2" class="form-control-sm form-control">
+                    <option value="0">select</option>
+                    <option value="1">Supplier</option>
+                    <option value="2">Category</option>
+                    <option value="3">Product SKU</option>
+                </select>
+            </div>
+            v
+
+
+            <div class="col col-sm-1">
+                <input type="text" id="input-small" name="input-small" placeholder="RON / %"
+                       class="input-sm form-control-sm form-control">
+            </div>
+
+
+        </div>
+
+        <button type="button" class="col-md-12 btn btn-outline-success btn-sm" style="right: 0%">
+            <i class="fa fa-magic"></i>&nbsp; Add rule
+        </button>
+    </form>
+               <script>
+            $(function(){
+            // inspect html to check id of category select dropdown.
+            $(document).on('change', "select#selection", function(){
+                if ($(this).val() == "sup" || $(this).val() == "cat"){
+                    if ($(this).val() == 'sup'){var options = '<option value="">Select Supplier</option>';}
+                    else if ($(this).val() == 'cat'){var options = '<option value="">Select Category</option>';}
+                    $("#skuinput").hide();
+                    $("#supcatdiv").show();
+                    $.getJSON("{% url 'thenx:details' %}",{'choice': $(this).val()}, function(j){
+                         for (var i = 0; i < j.length; i++) {
+                             options += '<option value="' + i + '">' + j[i] + '</option>';
+                         }
+                         // inspect html to check id of subcategory select dropdown.
+                         $("select#supcat").html(options);
+                     });}
+                else {
+                    $("#supcatdiv").hide();
+                    $("#skuinput").show();
+                }
+             });
+         });
+            </script>
 {% endblock dashcontent %}

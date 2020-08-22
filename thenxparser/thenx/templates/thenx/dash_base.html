@@ -4,6 +4,8 @@
 <head>
     <meta charset="UTF-8">
     <title>ThenX Dashboard -{% block title %} Home {% endblock title %}</title>
+    {# Favicon #}
+    <link rel="shortcut icon" type="image/png" href="{% static 'thenx/favicon.png' %}"/>
     <!-- Fontfaces CSS-->
     <link href="{% static 'thenx/css/font-face.css' %}" rel="stylesheet" media="all">
     <link href="{% static 'thenx/vendor/font-awesome-4.7/css/font-awesome.min.css' %}" rel="stylesheet" media="all">
@@ -13,6 +15,7 @@
 
     <!-- Bootstrap CSS-->
     <link href="{% static 'thenx/vendor/bootstrap-4.1/bootstrap.min.css' %}" rel="stylesheet" media="all">
+
 
     <!-- Vendor CSS-->
     <link href="{% static 'thenx/vendor/animsition/animsition.min.css' %}" rel="stylesheet" media="all">
@@ -155,9 +158,7 @@
             <!-- END COPYRIGHT-->
 </div>
 
-    <!-- Bootstrap JS-->
-    <script src="{% static 'thenx/vendor/bootstrap-4.1/popper.min.js' %}" ></script>
-    <script src="{% static 'thenx/vendor/bootstrap-4.1/bootstrap.min.js' %}" ></script>
+
     <!-- Vendor JS       -->
     <script src="{% static 'thenx/vendor/slick/slick.min.js' %}" >
     </script>
@@ -173,7 +174,9 @@
     <script src="{% static 'thenx/vendor/chartjs/Chart.bundle.min.js' %}" ></script>
     <script src="{% static 'thenx/vendor/select2/select2.min.js' %}" >
     </script>
-
+    <!-- Bootstrap JS-->
+    <script src="{% static 'thenx/vendor/bootstrap-4.1/popper.min.js' %}" ></script>
+    <script src="{% static 'thenx/vendor/bootstrap-4.1/bootstrap.min.js' %}" ></script>
     <!-- Main JS-->
     <script src="{% static 'thenx/js/main.js' %} "></script>
 </div>

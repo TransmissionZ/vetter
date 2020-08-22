@@ -6,5 +6,118 @@
 {% block nav %}Price List Rules {% endblock nav %}
 
 {% block dashcontent %}
+    <form method="post">
+        <div class="row form-group col-md-16">
+            <label for="selectSm" class="form-control-label" style="padding-left: 1.4%">Rule 1: Add local cost supplier:</label>
 
+            <div class="col col-sm-2">
+                <input type="text" id="input-small" name="input-small" placeholder="Local cost supplier"
+                       class="input-sm form-control-sm form-control">
+            </div>
+
+            <div class="col col-sm-2">
+                <input type="text" id="input-small" name="input-small" placeholder="Additional Cost"
+                       class="input-sm form-control-sm form-control">
+            </div>
+
+            <div class="col-8 col-md-1">
+                <select name="selectSm2" id="SelectLm2" class="form-control-sm form-control">
+                    <option value="0">Type</option>
+                    <option value="1">RON</option>
+                    <option value="2">%</option>
+                </select>
+            </div>
+
+            <label for="selectSm2" class="form-control-label">if supplier price is</label>
+
+
+            <div class="col-8 col-md-1">
+                <select name="selectSm2" id="SelectLm2" class="form-control-sm form-control">
+                    <option value="0">select</option>
+                    <option value="1">Higher</option>
+                    <option value="2">Lower</option>
+                    <option value="2">Equal to</option>
+                </select>
+            </div>
+
+            <label for="selectSm" class=" form-control-label">than</label>
+
+            <div class="col col-sm-1">
+                <input type="text" id="input-small" name="input-small" placeholder="RON / %"
+                       class="input-sm form-control-sm form-control">
+            </div>
+
+
+            <div class="col-8 col-md-1">
+                <select name="selectSm2" id="SelectLm2" class="form-control-sm form-control">
+                    <option value="0">Type</option>
+                    <option value="1">RON</option>
+                    <option value="2">%</option>
+                </select>
+            </div>
+
+        </div>
+
+        <button type="button" class="col-md-12 btn btn-outline-success btn-sm" style="right: 0%">
+            <i class="fa fa-magic"></i>&nbsp; Add rule
+        </button>
+    </form>
+
+    <hr>
+        <form method="post">
+        <div class="row form-group col-md-16">
+            <label for="selectSm" class="form-control-label" style="padding-left: 1.4%">Rule 2: Add local cost thenx:</label>
+
+            <div class="col col-sm-2">
+                <input type="text" id="input-small" name="input-small" placeholder="Local cost thenx"
+                       class="input-sm form-control-sm form-control">
+            </div>
+
+            <div class="col col-sm-2">
+                <input type="text" id="input-small" name="input-small" placeholder="Additional Cost"
+                       class="input-sm form-control-sm form-control">
+            </div>
+
+            <div class="col-8 col-md-1">
+                <select name="selectSm2" id="SelectLm2" class="form-control-sm form-control">
+                    <option value="0">Type</option>
+                    <option value="1">RON</option>
+                    <option value="2">%</option>
+                </select>
+            </div>
+
+            <label for="selectSm2" class="form-control-label">if supplier price is</label>
+
+
+            <div class="col-8 col-md-1">
+                <select name="selectSm2" id="SelectLm2" class="form-control-sm form-control">
+                    <option value="0">select</option>
+                    <option value="1">Higher</option>
+                    <option value="2">Lower</option>
+                    <option value="2">Equal to</option>
+                </select>
+            </div>
+
+            <label for="selectSm" class=" form-control-label">than</label>
+
+            <div class="col col-sm-1">
+                <input type="text" id="input-small" name="input-small" placeholder="RON / %"
+                       class="input-sm form-control-sm form-control">
+            </div>
+
+
+            <div class="col-8 col-md-1">
+                <select name="selectSm2" id="SelectLm2" class="form-control-sm form-control">
+                    <option value="0">Type</option>
+                    <option value="1">RON</option>
+                    <option value="2">%</option>
+                </select>
+            </div>
+
+        </div>
+
+        <button type="button" class="col-md-12 btn btn-outline-success btn-sm" style="right: 0%">
+            <i class="fa fa-magic"></i>&nbsp; Add rule
+        </button>
+    </form>
 {% endblock dashcontent %}

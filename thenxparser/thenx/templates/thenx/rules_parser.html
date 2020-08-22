@@ -6,68 +6,77 @@
 {% block nav %}Parser Rules {% endblock nav %}
 
 {% block dashcontent %}
-<div class="row form-group col-md-16">
-    <label for="selectSm" class="form-control-label" style="padding-left: 1.4%">Rule 1: My price should be</label>
-    <div class="col-12 col-md-1">
-        <select name="selectSm" id="SelectLm" class="form-control-sm form-control">
-            <option value="0">Select Range</option>
-            <option value="1">Higher</option>
-            <option value="2">Average</option>
-            <option value="2">Cheapest</option>
-        </select>
-    </div>
+    <form method="post">
+        <div class="row form-group col-md-16">
+            <label for="selectSm" class="form-control-label" style="padding-left: 1.4%">Rule 1: My price should
+                be</label>
+            <div class="col-12 col-md-1">
+                <select name="selectSm" id="SelectLm" class="form-control-sm form-control">
+                    <option value="0">Select Range</option>
+                    <option value="1">Higher</option>
+                    <option value="2">Average</option>
+                    <option value="2">Cheapest</option>
+                </select>
+            </div>
 
-    <div class="col col-sm-1">
-        <input type="text" id="input-small" name="input-small" placeholder="RON / %" class="input-sm form-control-sm form-control">
-    </div>
-
-
-    <div class="col-8 col-md-1">
-        <select name="selectSm2" id="SelectLm2" class="form-control-sm form-control">
-            <option value="0">Type</option>
-            <option value="1">RON</option>
-            <option value="2">%</option>
-        </select>
-    </div>
-
-    <label for="selectSm2" class="form-control-label">than</label>
+            <div class="col col-sm-1">
+                <input type="text" id="input-small" name="input-small" placeholder="RON / %"
+                       class="input-sm form-control-sm form-control">
+            </div>
 
 
-    <div class="col-8 col-md-1">
-        <select name="selectSm2" id="SelectLm2" class="form-control-sm form-control">
-            <option value="0">Please select</option>
-            <option value="1">Highest</option>
-            <option value="2">Cheapest</option>
-            <option value="2">Average</option>
-        </select>
-    </div>
+            <div class="col-8 col-md-1">
+                <select name="selectSm2" id="SelectLm2" class="form-control-sm form-control">
+                    <option value="0">Type</option>
+                    <option value="1">RON</option>
+                    <option value="2">%</option>
+                </select>
+            </div>
 
-    <label for="selectSm" class=" form-control-label">of</label>
-    <div class="col-8 col-md-1">
-        <select name="selectSm2" id="SelectLm2" class="form-control-sm form-control">
-            <option value="0">All Competitors</option>
-            {% for _ in totalcomps %}
-                <option value="{{ forloop.counter }}">{{ forloop.counter }}</option>
-            {% endfor %}
-        </select>
-    </div>
-
-    <label for="selectSm" class=" form-control-label">but it should not be lower than my final cost +</label>
-
-    <div class="col-12 col-md-1">
-        <input type="text" id="text-input" name="text-input" placeholder="Text" class="form-control">
-        <small class="form-text text-muted">&nbsp;RON / %</small>
-    </div>
+            <label for="selectSm2" class="form-control-label">than</label>
 
 
-    <div class="col-8 col-md-1">
-        <select name="selectSm2" id="SelectLm2" class="form-control-sm form-control">
-            <option value="0">Type</option>
-            <option value="1">RON</option>
-            <option value="2">%</option>
-        </select>
-    </div>
+            <div class="col-8 col-md-1">
+                <select name="selectSm2" id="SelectLm2" class="form-control-sm form-control">
+                    <option value="0">Please select</option>
+                    <option value="1">Highest</option>
+                    <option value="2">Cheapest</option>
+                    <option value="2">Average</option>
+                </select>
+            </div>
+
+            <label for="selectSm" class=" form-control-label">of</label>
+            <div class="col-8 col-md-1">
+                <select name="selectSm2" id="SelectLm2" class="form-control-sm form-control">
+                    <option value="0">All Competitors</option>
+                    {% for _ in totalcomps %}
+                        <option value="{{ forloop.counter }}">{{ forloop.counter }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <label for="selectSm" class=" form-control-label">but it should not be lower than my final cost +</label>
+
+            <div class="col col-sm-1">
+                <input type="text" id="input-small" name="input-small" placeholder="RON / %"
+                       class="input-sm form-control-sm form-control">
+            </div>
 
 
-</div>
+            <div class="col-8 col-md-1">
+                <select name="selectSm2" id="SelectLm2" class="form-control-sm form-control">
+                    <option value="0">Type</option>
+                    <option value="1">RON</option>
+                    <option value="2">%</option>
+                </select>
+            </div>
+
+        </div>
+
+        <button type="button" class="col-md-12 btn btn-outline-success btn-sm" style="right: 0%">
+            <i class="fa fa-magic"></i>&nbsp; Add rule
+        </button>
+    </form>
+
+
 {% endblock dashcontent %}

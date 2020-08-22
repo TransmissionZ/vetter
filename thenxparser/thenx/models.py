@@ -3,16 +3,20 @@ import re
 from datetime import datetime
 from django.utils import timezone
 from .scrappers import *
+from django_mysql.models import JSONField
 # Create your models here.
 
 class Product(models.Model):
     SKU = models.CharField(max_length=32)
     name = models.TextField()
     price = models.FloatField(default=0.0)
+    base_cost = models.FloatField(default=0.0)
     brand = models.TextField()
     originalurl = models.TextField()
     dateupdated = models.DateTimeField()
     important = models.BooleanField(default=False)
+    category = JSONField(default=list)
+    supplier = models.TextField(default='')
 
     def update_price(self, price):
         self.price = price
@@ -38,7 +42,7 @@ class Competitor_URL(models.Model):
     url = models.TextField()
     comp_name = models.TextField()
     comp_price = models.FloatField(default=0.0)
-    lastupdated = models.DateTimeField(default=timezone.now())
+    lastupdated = models.DateTimeField()
 
     def __str__(self):
         return self.comp_name

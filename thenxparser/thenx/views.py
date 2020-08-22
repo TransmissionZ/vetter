@@ -15,6 +15,7 @@ from django.http import HttpResponseRedirect
 from django.urls import reverse
 from django.contrib import messages
 from datetime import timedelta
+import json
 # For login required @login_required(login_url='thenx:login')
 def index(request):
     return redirect("thenx:login")
@@ -49,7 +50,7 @@ def dash_view(request):
     totalp = Product.objects.count()
     totalc = Competitor_URL.objects.count()
     comp = Competitor_URL.objects.order_by('comp_name').values_list("comp_name", flat=True).distinct().count()
-    #UpdateDB()
+
     brands = Product.objects.order_by("brand").values_list("brand", flat=True).distinct()
     delta = datetime.now() - timedelta(days=1)
     recentlychanged = Product.objects.filter(dateupdated__gte=delta).count()
@@ -83,6 +84,7 @@ def get_count_users():
 
 @login_required(login_url='thenx:login')
 def products_view(request):
+    #UpdateDB()
     brands = Product.objects.order_by("brand").values_list("brand", flat=True).distinct()
     plist = Product.objects.all()
     if request.method == "POST":
@@ -176,7 +178,7 @@ def set_imp(request):
 def redirecttoproduct(request, sku):
     return HttpResponseRedirect('./' + '?brand=All' + '&' + 'q=' + sku)
 
-@login_required()
+@login_required(login_url='thenx:login')
 def rules_view(request):
     totalcomps = [_ for _ in range(Competitor_URL.objects.order_by('comp_name').values_list("comp_name", flat=True).distinct().count())]
     return render(request, 'thenx/rules.html', {'totalcomps':totalcomps})
@@ -200,3 +202,14 @@ def rules_vat(request):
 def rules_warranty(request):
 
     return render(request, 'thenx/rules_warranty.html', )
+
+def getDetails(request):
+    choice = request.GET.get('choice', '')
+    if choice == 'cat':
+        all_cats = Product.objects.order_by('category').values_list("category", flat=True).distinct()
+        result_set = list(set(x for l in all_cats for x in l))
+    elif choice == 'sup':
+        result_set = list(Product.objects.order_by('supplier').values_list("supplier", flat=True).distinct())
+    else:
+        result_set = []
+    return HttpResponse(json.dumps(result_set), content_type='application/json')
