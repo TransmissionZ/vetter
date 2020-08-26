@@ -21,12 +21,12 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # See https://docs.djangoproject.com/en/3.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'k!nbt7iah8pw_!o06my%jqx*n*)+72jhbjt)!-onqs@xn^b@6u'
+# SECRET_KEY = 'k!nbt7iah8pw_!o06my%jqx*n*)+72jhbjt)!-onqs@xn^b@6u'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+# DEBUG = True
 
-ALLOWED_HOSTS = ["transmissionz.pythonanywhere.com", '127.0.0.1']
+ALLOWED_HOSTS = ['mharoons.com', "transmissionz.pythonanywhere.com", '127.0.0.1']
 
 
 # Application definition
@@ -78,11 +78,11 @@ WSGI_APPLICATION = 'thenxparser.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'thenx', #os.path.join(BASE_DIR, 'thenxappMariaDB'),
-        'USER': 'thenxdefault',
-        'PASSWORD': 'ThenX.011',
-        'HOST': '',
-        'PORT': '',
+        'NAME': 'mharoons_thenx', #os.path.join(BASE_DIR, 'thenxappMariaDB'),
+        'USER': 'mharoons_thenxadmin',
+        'PASSWORD': 'Fast.41000',
+        'HOST': 'mharoons:mysql.mharoons.com',
+        'PORT': '3306',
     }
 }
 
@@ -134,9 +134,3 @@ CELERY_RESULT_SERIALIZER = 'json'
 CELERY_TASK_SERIALIZER = 'json'
 CELERY_TIMEZONE = ''#'Asia/Makassar'
 CELERY_TASK_ALWAYS_EAGER = True
-# CELERY_BEAT_SCHEDULE = {
-#     'UpdateDB': {
-#             'task': 'thenx.tasks.UpdateDB',
-#             'schedule': crontab(minute="*/1", day_of_week="*"),
-#         },
-# }
