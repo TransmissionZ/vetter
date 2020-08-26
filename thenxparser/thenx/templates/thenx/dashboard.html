@@ -126,7 +126,7 @@
                                 {% for c in p.competitor_url_set.all %} {{ c.comp_name }}
                                     {% if p.competitor_url_set.count != forloop.counter %},{% endif %}{% endfor %}
                             </td>
-                            <td>{{ p.price }}</td>
+                            <td>{{ p.base_cost }}</td>
                             <td>{{ p.dateupdated }}</td>
                         </tr>
                     {% endfor %}

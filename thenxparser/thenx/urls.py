@@ -21,5 +21,6 @@ urlpatterns = [
     path('dashboard/rules/vat', views.rules_vat, name='vatrules'),
     path('dashboard/rules/warranty', views.rules_warranty, name='warrantyrules'),
     path('dashboard/rules/', views.rules_view, name='rules'),
-    path('rules/getDetails/', views.getDetails, name='details')
+    path('rules/getDetails/', views.getDetails, name='details'),
+    path('validatesku/', views.validateSKU, name='validatesku')
 ]

@@ -26,7 +26,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # SECURITY WARNING: don't run with debug turned on in production!
 # DEBUG = True
 
-ALLOWED_HOSTS = ["transmissionz.pythonanywhere.com", '127.0.0.1', 'mharoons.com']
+ALLOWED_HOSTS = ['mharoons.com', "transmissionz.pythonanywhere.com", '127.0.0.1']
 
 
 # Application definition
@@ -81,7 +81,7 @@ DATABASES = {
         'NAME': 'mharoons_thenx', #os.path.join(BASE_DIR, 'thenxappMariaDB'),
         'USER': 'mharoons_thenxadmin',
         'PASSWORD': 'Fast.41000',
-        'HOST': 'localhost',
+        'HOST': 'mharoons:mysql.mharoons.com',
         'PORT': '3306',
     }
 }

@@ -6,15 +6,20 @@
 {% block nav %}VAT Rules {% endblock nav %}
 
 {% block dashcontent %}
-    <form method="post">
-    {% csrf_token %}
-    <div class="row form-group col-md-16">
-        <label for="selectSm" class="form-control-label" style="padding-left: 1.4%">Rule 1: Add VAT</label>
+    <form action= {% url 'thenx:vatrules' %} method="post">
+        {% csrf_token %}
+        <div class="row form-group col-md-16">
+            <label for="selectSm" class="form-control-label" style="padding-left: 1.4%">Rule 1: Add VAT</label>
 
-        <div class="col col-sm-1">
-            <input type="text" id="input-small" name="input-small" placeholder="VAT in %"
-                   class="input-sm form-control-sm form-control">
+            <div class="col col-sm-1">
+                <input type="text" id="input-small" name="vat" placeholder="VAT in %"
+                       class="input-sm form-control-sm form-control">
+            </div>
         </div>
-    </div>
-        </form>
+        <input type="hidden" name="type" value="vat">
+        <input type="hidden" name="url" value="{% url 'thenx:vatrules' %}">
+        <button type="button" onclick="this.form.submit()" class="col-md-12 btn btn-outline-success btn-sm" style="right: 0%">
+            <i class="fa fa-magic"></i>&nbsp; Add rule
+        </button>
+    </form>
 {% endblock dashcontent %}

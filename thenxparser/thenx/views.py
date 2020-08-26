@@ -184,24 +184,47 @@ def rules_view(request):
     return render(request, 'thenx/rules.html', {'totalcomps':totalcomps})
 
 def rules_parser(request):
+    if request.method == "POST":
+        print(request.POST.dict)
+        pass
 
     return render(request, 'thenx/rules_parser.html', )
 
 def rules_price_list(request):
-
-    return render(request, 'thenx/rules_pricelist.html', )
+    if request.method == "POST":
+        pass
+    suppliers = list(Product.objects.order_by('supplier').values_list("supplier", flat=True).distinct())
+    return render(request, 'thenx/rules_pricelist.html', {"suppliers":suppliers})
 
 def rules_margins(request):
+    if request.method == "POST":
+        pass
 
     return render(request, 'thenx/rules_margin.html', )
 
 def rules_vat(request):
-
+    if request.method == "POST":
+        vat = request.POST.get("vat")
+        print(vat)
     return render(request, 'thenx/rules_vat.html', )
 
 def rules_warranty(request):
+    if request.method == 'POST':
+        warranty = request.POST.get("warranty")
+        print(warranty)
+        applyon = request.POST["applyon"]
+        if applyon == 'sup' or applyon == 'cat':
+            applyon = request.POST["supcat"]
+        elif applyon == 'sku':
+            applyon = request.POST.get("sku")
+        else:
+            pass
+        print(applyon)
+        value = request.POST.get("value")
+        print(value)
 
     return render(request, 'thenx/rules_warranty.html', )
+
 
 def getDetails(request):
     choice = request.GET.get('choice', '')
@@ -213,3 +236,13 @@ def getDetails(request):
     else:
         result_set = []
     return HttpResponse(json.dumps(result_set), content_type='application/json')
+
+
+def validateSKU(request):
+    sku = request.GET.get('sku')
+    p = Product.objects.filter(SKU__exact=sku).first()
+    if p == None:
+    #messages.error(request, "This product SKU does not exist")
+        return HttpResponse(json.dumps({"result": "False"}), content_type='application/json')
+    else:
+        return HttpResponse(json.dumps({"result": "True"}), content_type='application/json')

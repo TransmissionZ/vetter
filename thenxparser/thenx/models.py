@@ -4,7 +4,14 @@ from datetime import datetime
 from django.utils import timezone
 from .scrappers import *
 from django_mysql.models import JSONField
+import math
 # Create your models here.
+
+def normal_round(n):
+    if n - math.floor(n) < 0.5:
+        return math.floor(n)
+    return math.ceil(n)
+
 
 class Product(models.Model):
     SKU = models.CharField(max_length=32)
@@ -36,7 +43,67 @@ class Product(models.Model):
         def __unicode__(self):
             return self.name
 
+class Price_List(models.Model):
+    RON = "RON"
+    P = "%"
+    TYPE_CHOICE = (
+        (RON, "Ron"),
+        (P, "%")
+    )
 
+    product = models.OneToOneField(Product, on_delete=models.CASCADE)
+    finalprice = models.FloatField(default=0.0)
+    localcostsupplier = models.FloatField(default=0.0)
+    localcostsuppliertype = models.CharField(max_length=3, choices=TYPE_CHOICE, default=RON)
+    localcostthenx = models.FloatField(default=0.0)
+    localcostthenxtype = models.CharField(max_length=4, choices=TYPE_CHOICE, default=RON)
+    wsprice = models.FloatField(default=0.0) #Whole Sale
+    wspricetype = models.CharField(max_length=4, choices=TYPE_CHOICE, default=RON)
+    retailprice = models.FloatField(default=0.0)
+    retailpricetype = models.CharField(max_length=4, choices=TYPE_CHOICE, default=RON)
+    warranty = models.IntegerField(default=0)
+    vat = models.FloatField(default=0.0)
+    allproductcost = models.FloatField(default=0.0)
+    gpws = models.FloatField(default=0.0) # Gross Profit Wholesale
+    margin_ws = models.FloatField(default=0.0)
+    gp_shop = models.FloatField(default=0.0)
+    margin_shop = models.FloatField(default=0.0)
+
+    def __str__(self):
+        return self.finalprice
+
+    def save(self, *args, **kwargs):
+        self.finalprice = self.product.base_cost
+        if self.localcostsuppliertype == self.RON:
+            self.finalprice += self.localcostsupplier
+        else:
+            if self.localcostsupplier != 0.0:
+                self.finalprice *= 1 + self.localcostsupplier/100
+        if self.localcostthenxtype == self.RON:
+            self.finalprice += self.localcostthenx
+        else:
+            if self.localcostthenx != 0.0:
+                self.finalprice *= 1 + self.localcostthenx/100
+        if self.vat != 0.0:
+            self.finalprice *= 1 + self.vat/100
+        self.allproductcost = self.finalprice
+        if self.wspricetype == self.RON:
+            self.finalprice += self.wsprice
+        else:
+            if self.wsprice != 0.0:
+                self.finalprice *= 1 + self.wsprice/100
+        self.finalprice = normal_round(self.finalprice)
+        if self.retailpricetype == self.RON:
+            self.finalprice += self.retailprice
+        else:
+            if self.retailprice != 0.0:
+                self.finalprice *= 1 + self.retailprice / 100
+
+        self.finalprice = normal_round(self.finalprice)
+        self.finalprice = self.finalprice - 0.01
+        self.gpws = self.allproductcost - self.wsprice
+        self.margin_ws = normal_round(((self.finalprice - self.allproductcost)/self.finalprice)*100)
+        return super(Price_List, self).save(*args, **kwargs)
 class Competitor_URL(models.Model):
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
     url = models.TextField()
@@ -104,12 +171,102 @@ class Competitor_URL(models.Model):
                 n1 = self.url.find('.')
                 self.comp_name = self.url[:n1]
         return super(Competitor_URL, self).save(*args, **kwargs)
-    # def (self):
-    #     print('called')
-    #     try:
-    #         n = re.findall(r'(?<=\.)([^.]+)(?:\.(?:co\.uk|ac\.us|[^.]+(?:$|\n)))', self.url)
-    #         self.comp_name = n[0]
-    #         self.save()
-    #     except Exception as e:
-    #         self.comp_name = self.url
-    #         self.save()
+
+
+class vatrules(models.Model):
+    vat = models.IntegerField(default=0)
+
+
+class warrantyrules(models.Model):
+    CAT = "CAT"
+    SUP = "SUP"
+    SKU = "SKU"
+    CHOICES = (
+        (CAT, "cat"),
+        (SUP, "sup"),
+        (SKU, "sku")
+    )
+
+    days = models.IntegerField(default=0)
+    appliedon = models.CharField(max_length=3, choices=CHOICES, default=SKU)
+    value = models.TextField(default='')
+
+class marginrules(models.Model):
+    CAT = "CAT"
+    SUP = "SUP"
+    SKU = "SKU"
+    CHOICES = (
+        (CAT, "cat"),
+        (SUP, "sup"),
+        (SKU, "sku")
+    )
+    RON = "RON"
+    P = "%"
+    TYPE_CHOICE = (
+        (RON, "Ron"),
+        (P, "%")
+    )
+    wsprice = models.FloatField(default=0.0)
+    wspricetype = models.CharField(max_length=4, choices=TYPE_CHOICE, default=RON)
+    retailprice = models.FloatField(default=0.0)
+    retailpricetype = models.CharField(max_length=4, choices=TYPE_CHOICE, default=RON)
+    supplier = models.TextField(default='')
+
+class pricelistrules(models.Model):
+    HIGH = "HIGH"
+    LOW = "LOW"
+    EQUALTO = "EQUALTO"
+    HLCHOICES = (
+        (HIGH, "High"),
+        (LOW, "Low"),
+        (EQUALTO, "Equals")
+    )
+    RON = "RON"
+    P = "%"
+    TYPE_CHOICE = (
+        (RON, "Ron"),
+        (P, "%")
+    )
+    SUP = "SUP"
+    THENX = "THENX"
+    OPTIONS = (
+        (SUP, "Supplier"),
+        (THENX, "Thenx")
+    )
+    localcosttype = models.CharField(max_length=15, choices=OPTIONS, default=SUP    )
+    localcost = models.FloatField(default=0.0)
+    type = models.CharField(max_length=4, choices=TYPE_CHOICE, default=RON)
+    ifsuppriceis = models.CharField(max_length=7, choices=HLCHOICES, default=HIGH)
+    than = models.FloatField(default=0.0)
+    thantype = models.CharField(max_length=4, choices=TYPE_CHOICE, default=RON)
+    supplier = models.TextField(default='')
+
+class competitorrules(models.Model):
+    HIGH = "HIGH"
+    LOW = "LOW"
+    EQUALTO = "EQUALTO"
+    HLCHOICES = (
+        (HIGH, "High"),
+        (LOW, "Low"),
+        (EQUALTO, "Equals")
+    )
+    RON = "RON"
+    P = "%"
+    TYPE_CHOICE = (
+        (RON, "Ron"),
+        (P, "%")
+    )
+    SUP = "SUP"
+    THENX = "THENX"
+    OPTIONS = (
+        (SUP, "Supplier"),
+        (THENX, "Thenx")
+    )
+    priceshouldbe = models.CharField(max_length=7, choices=HLCHOICES, default=HIGH)
+    than = models.FloatField(default=0.0)
+    thantype = models.CharField(max_length=4, choices=TYPE_CHOICE, default=RON)
+    thenHL = models.CharField(max_length=7, choices=HLCHOICES, default=HIGH)
+    competitor = models.TextField(default='')
+    butnotlowerthan = models.FloatField(default=0.0)
+    butnotlowerthantype = models.CharField(max_length=4, choices=TYPE_CHOICE, default=RON)
+    pass

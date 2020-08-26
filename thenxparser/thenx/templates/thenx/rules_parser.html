@@ -6,27 +6,28 @@
 {% block nav %}Parser Rules {% endblock nav %}
 
 {% block dashcontent %}
-    <form method="post">
+    <form action="{% url 'thenx:parserrules' %}" method="post">
+    {% csrf_token %}
         <div class="row form-group col-md-16">
             <label for="selectSm" class="form-control-label" style="padding-left: 1.4%">Rule 1: My price should
                 be</label>
             <div class="col-12 col-md-1">
-                <select name="selectSm" id="SelectLm" class="form-control-sm form-control">
-                    <option value="0">Select Range</option>
+                <select name="HL1" id="HL" class="form-control-sm form-control" required>
+                    <option value="0" disabled selected>Select Range</option>
                     <option value="1">Higher</option>
                     <option value="2">Average</option>
-                    <option value="2">Cheapest</option>
+                    <option value="2">Cheaper</option>
                 </select>
             </div>
 
             <div class="col col-sm-1">
-                <input type="text" id="input-small" name="input-small" placeholder="RON / %"
-                       class="input-sm form-control-sm form-control">
+                <input type="text" id="input-small" name="than1" placeholder="RON / %"
+                       class="input-sm form-control-sm form-control" required="required"/>
             </div>
 
 
             <div class="col-8 col-md-1">
-                <select name="selectSm2" id="SelectLm2" class="form-control-sm form-control">
+                <select name="thantype" id="SelectLm2" class="form-control-sm form-control">
                     <option value="0">Type</option>
                     <option value="1">RON</option>
                     <option value="2">%</option>
@@ -48,7 +49,7 @@
             <label for="selectSm" class=" form-control-label">of</label>
             <div class="col-8 col-md-1">
                 <select name="selectSm2" id="SelectLm2" class="form-control-sm form-control">
-                    <option value="0">All Competitors</option>
+                    <option value="all">All Competitors</option>
                     {% for _ in totalcomps %}
                         <option value="{{ forloop.counter }}">{{ forloop.counter }}</option>
                     {% endfor %}
@@ -73,7 +74,7 @@
 
         </div>
 
-        <button type="button" class="col-md-12 btn btn-outline-success btn-sm" style="right: 0%">
+        <button type="submit" class="col-md-12 btn btn-outline-success btn-sm" style="right: 0%">
             <i class="fa fa-magic"></i>&nbsp; Add rule
         </button>
     </form>

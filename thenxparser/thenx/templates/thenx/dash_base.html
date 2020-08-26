@@ -179,6 +179,108 @@
     <script src="{% static 'thenx/vendor/bootstrap-4.1/bootstrap.min.js' %}" ></script>
     <!-- Main JS-->
     <script src="{% static 'thenx/js/main.js' %} "></script>
+    <script>
+    $(function () {
+        // inspect html to check id of category select dropdown.
+        $(document).on('input', "#sku", function () {
+            var elem = $("#sku").val();
+            $.ajax({
+                url: {% url 'thenx:validatesku' %},
+                type: 'get',
+                data: {sku:elem},
+                dataType: 'json',
+                success: function(resp){
+                    if (resp.result === "False"){
+                        $("#skuerror").show();
+                    }
+                    else{
+                        $("#skuerror").hide();
+                    };
+                }
+        });
+        });
+    })
+    </script>
+    <script>
+    $(function () {
+        // inspect html to check id of category select dropdown.
+        $(document).on('input', "#sku1", function () {
+            var elem = $("#sku1").val();
+            $.ajax({
+                url: {% url 'thenx:validatesku' %},
+                type: 'get',
+                data: {sku:elem},
+                dataType: 'json',
+                success: function(resp){
+                    if (resp.result === "False"){
+                        $("#skuerror1").show();
+                    }
+                    else{
+                        $("#skuerror1").hide();
+                    };
+                }
+        });
+        });
+    })
+    </script>
+        <script>
+        $(function () {
+            // inspect html to check id of category select dropdown.
+            $(document).on('change', "select#selection", function () {
+                if ($(this).val() == "sup" || $(this).val() == "cat") {
+                    if ($(this).val() == 'sup') {
+                        var options = '<option value="">Select Supplier</option>';
+                    } else if ($(this).val() == 'cat') {
+                        var options = '<option value="">Select Category</option>';
+                    }
+                    $("#skuinput").hide();
+                    $("#supcatdiv").show();
+                    $.getJSON("{% url 'thenx:details' %}", {'choice': $(this).val()}, function (j) {
+                        for (var i = 0; i < j.length; i++) {
+                            options += '<option value="' + i + '">' + j[i] + '</option>';
+                        }
+                        // inspect html to check id of subcategory select dropdown.
+                        $("select#supcat").html(options);
+                    });
+                } else if ($(this).val() == "sku"){
+                    $("#supcatdiv").hide();
+                    $("#skuinput").show();
+                }
+                else{
+                    $("#supcatdiv").hide();
+                    $("#skuinput").hide();
+                }
+            });
+        });
+
+        $(function (){
+            $(document).on('change', "select#selection2", function () {
+                if ($(this).val() == "sup" || $(this).val() == "cat") {
+                    if ($(this).val() == 'sup') {
+                        var options = '<option value="">Select Supplier</option>';
+                    } else if ($(this).val() == 'cat') {
+                        var options = '<option value="">Select Category</option>';
+                    }
+                    $("#skuinput2").hide();
+                    $("#supcatdiv2").show();
+                    $.getJSON("{% url 'thenx:details' %}", {'choice': $(this).val()}, function (j) {
+                        for (var i = 0; i < j.length; i++) {
+                            options += '<option value="' + i + '">' + j[i] + '</option>';
+                        }
+                        // inspect html to check id of subcategory select dropdown.
+                        $("select#supcat2").html(options);
+                    });
+                } else if ($(this).val() == "sku"){
+                    $("#supcatdiv2").hide();
+                    $("#skuinput2").show();
+                }
+                else {
+                    $("#supcatdiv2").hide();
+                    $("#skuinput2").hide()
+                }
+            });
+        })
+    </script>
 </div>
 </body>
 
