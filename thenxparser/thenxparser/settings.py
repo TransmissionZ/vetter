@@ -10,18 +10,26 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/3.0/ref/settings/
 """
 
-import os
+import os, sys
 #from celery.schedules import crontab
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
+# add project folder to path
+path = '/home/mharoons/thenx/repositories/vetter/thenxparser/'
+if path not in sys.path:
+    sys.path.insert(0, path)
+
+path = '/home/mharoons/thenx'
+if path not in sys.path:
+    sys.path.insert(0, path)
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/3.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = os.environ["SECRET_KEY"] #'k!nbt7iah8pw_!o06my%jqx*n*)+72jhbjt)!-onqs@xn^b@6u'
+SECRET_KEY = os.environ["SECRET_KEY"]
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
@@ -40,7 +48,6 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'thenx',
-    'thenxparser'
 ]
 
 MIDDLEWARE = [
