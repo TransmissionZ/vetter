@@ -82,7 +82,7 @@ DATABASES = {
         'NAME': 'mharoons_thenx', #os.path.join(BASE_DIR, 'thenxappMariaDB'),
         'USER': 'mharoons_thenxadmin',
         'PASSWORD': 'Fast.41000',
-        'HOST': 'mharoons@mysql.mharoons.com',
+        'HOST': '95.217.116.66',
         'PORT': '3306',
     }
 }
