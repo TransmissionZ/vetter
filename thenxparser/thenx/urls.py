@@ -22,5 +22,6 @@ urlpatterns = [
     path('dashboard/rules/warranty', views.rules_warranty, name='warrantyrules'),
     path('dashboard/rules/', views.rules_view, name='rules'),
     path('rules/getDetails/', views.getDetails, name='details'),
-    path('validatesku/', views.validateSKU, name='validatesku')
+    path('validatesku/', views.validateSKU, name='validatesku'),
+    path('dashboard/rules/delete/(<ruleid>)/(<rule>)', views.deleterule, name='deleterule'),
 ]

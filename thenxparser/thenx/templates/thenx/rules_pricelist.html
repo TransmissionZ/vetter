@@ -7,22 +7,27 @@
 
 {% block dashcontent %}
     <form action="{% url 'thenx:pricelistrules' %}" method="post">
-    {% csrf_token %}
+        {% csrf_token %}
         <div class="row form-group col-md-16">
-            <label for="selectSm" class="form-control-label" style="padding-left: 1.4%">Rule 1: Add local cost
-                supplier:</label>
+            <label for="selectSm" class="form-control-label" style="padding-left: 1.4%">Add local cost
+                :</label>
 
+            <div class="col-8 col-md-1">
+                <select name="localcosttype" id="localcosttype" class="form-control-sm form-control" required>
+                    <option value="ThenX" selected>ThenX</option>
+                    <option value="Supplier">Supplier</option>
+                </select>
+            </div>
 
             <div class="col col-sm-1">
-                <input type="text" id="input-small" name="input-small" placeholder="Cost"
-                       class="input-sm form-control-sm form-control">
+                <input type="text" id="input-small" name="cost" placeholder="Cost"
+                       class="input-sm form-control-sm form-control" required>
             </div>
 
             <div class="col-8 col-md-1">
-                <select name="selectSm2" id="SelectLm2" class="form-control-sm form-control">
-                    <option value="0">Type</option>
-                    <option value="1">RON</option>
-                    <option value="2">%</option>
+                <select name="costtype" id="SelectLm2" class="form-control-sm form-control" required>
+                    <option value="Ron">RON</option>
+                    <option value="%">%</option>
                 </select>
             </div>
 
@@ -30,108 +35,80 @@
 
 
             <div class="col-8 col-md-1">
-                <select name="selectSm2" id="SelectLm2" class="form-control-sm form-control">
-                    <option value="0">select</option>
-                    <option value="1">Higher</option>
-                    <option value="2">Lower</option>
-                    <option value="2">Equal to</option>
+                <select name="HL" id="SelectLm2" class="form-control-sm form-control" required>
+                    <option value="0" selected disabled>select</option>
+                    <option value="Higher">Higher</option>
+                    <option value="Lower">Lower</option>
+                    <option value="Equal to">Equal to</option>
                 </select>
             </div>
 
             <label for="selectSm" class=" form-control-label">than</label>
 
             <div class="col col-sm-1">
-                <input type="text" id="input-small" name="input-small" placeholder="RON / %"
-                       class="input-sm form-control-sm form-control">
+                <input type="text" id="input-small" name="than" placeholder="RON / %"
+                       class="input-sm form-control-sm form-control" required>
             </div>
 
 
             <div class="col-8 col-md-1">
-                <select name="selectSm2" id="SelectLm2" class="form-control-sm form-control">
-                    <option value="0">Type</option>
-                    <option value="1">RON</option>
-                    <option value="2">%</option>
+                <select name="thantype" id="SelectLm2" class="form-control-sm form-control" required>
+                    <option value="Ron" selected>RON</option>
+                    <option value="%">%</option>
                 </select>
             </div>
-        <label for="selectSm" class=" form-control-label">for</label>
+            <label for="selectSm" class=" form-control-label">for</label>
             <div class="col-8 col-md-2">
-                <select name="supplier" id="SelectLm2" class="form-control-sm form-control">
+                <select name="supplier" id="SelectLm2" class="form-control-sm form-control" required>
                     <option value="0" selected disabled>Select Supplier</option>
                     {% for s in suppliers %}
-                        <option value="s">{{ s }}</option>
+                        <option value="{{ s }}">{{ s }}</option>
                     {% endfor %}
                 </select>
             </div>
 
         </div>
 
-        <button type="button" onclick="this.form.submit()" class="col-md-12 btn btn-outline-success btn-sm" style="right: 0%">
+        <button type="submit" class="col-md-12 btn btn-outline-success btn-sm"
+                style="right: 0%">
             <i class="fa fa-magic"></i>&nbsp; Add rule
         </button>
     </form>
 
     <hr>
-    <form method="post">
-        <div class="row form-group col-md-16">
-            <label for="selectSm" class="form-control-label" style="padding-left: 1.4%">Rule 2: Add local cost
-                thenx:</label>
+    <br><br>
 
+    {#    Applied Rules List  #}
 
-            <div class="col col-sm-1">
-                <input type="text" id="input-small" name="input-small" placeholder="Cost"
-                       class="input-sm form-control-sm form-control">
+    <div class="col-md-12">
+        {% if rules.count != 0 %}
+            <div class="vue-lists">
+                <div class="row">
+                    <div class="col-md-6">
+                        <h2 class="mb-4">Applied Rules:</h2>
+                        <ul>
+                            {% for r in rules %}
+                                <li>
+                                    <form action="{% url 'thenx:deleterule' ruleid=r.pk rule="pricelist" %}"
+                                          method="post">
+                                        {% csrf_token %}
+                                        Add local cost {{ r.localcosttype }} of {{ r.localcost }} {{ r.type }} if supplier
+                                        price is {{ r.ifsuppriceis }} than {{ r.than }}{{ r.thantype }} for supplier:
+                                        {{ r.supplier }}
+
+                                        <button class="item" data-toggle="tooltip" data-placement="top" title="Delete">
+                                            <i class="zmdi zmdi-delete"></i>
+                                        </button>
+                                    </form>
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                </div>
             </div>
+        {% else %}
+            <h3 class="mb-auto">No Rules Applied.</h3>
+        {% endif %}
+    </div>
 
-            <div class="col-8 col-md-1">
-                <select name="selectSm2" id="SelectLm2" class="form-control-sm form-control">
-                    <option value="0">Type</option>
-                    <option value="1">RON</option>
-                    <option value="2">%</option>
-                </select>
-            </div>
-
-            <label for="selectSm2" class="form-control-label">if supplier price is</label>
-
-
-            <div class="col-8 col-md-1">
-                <select name="selectSm2" id="SelectLm2" class="form-control-sm form-control">
-                    <option value="0">select</option>
-                    <option value="1">Higher</option>
-                    <option value="2">Lower</option>
-                    <option value="2">Equal to</option>
-                </select>
-            </div>
-
-            <label for="selectSm" class=" form-control-label">than</label>
-
-            <div class="col col-sm-1">
-                <input type="text" id="input-small" name="input-small" placeholder="RON / %"
-                       class="input-sm form-control-sm form-control">
-            </div>
-
-
-            <div class="col-8 col-md-1">
-                <select name="selectSm2" id="SelectLm2" class="form-control-sm form-control">
-                    <option value="0">Type</option>
-                    <option value="1">RON</option>
-                    <option value="2">%</option>
-                </select>
-            </div>
-        <label for="selectSm" class=" form-control-label">for</label>
-            <div class="col-8 col-md-2">
-                <select name="selectSm2" id="SelectLm2" class="form-control-sm form-control">
-                    <option value="0" selected disabled>Select Supplier</option>
-                    {% for s in suppliers %}
-                        <option value="s">{{ s }}</option>
-                    {% endfor %}
-                </select>
-            </div>
-        </div>
-
-
-
-        <button type="button" class="col-md-12 btn btn-outline-success btn-sm" style="right: 0%">
-            <i class="fa fa-magic"></i>&nbsp; Add rule
-        </button>
-    </form>
 {% endblock dashcontent %}

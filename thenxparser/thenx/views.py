@@ -8,8 +8,8 @@ from django.http import HttpResponse
 from .forms import AuthenticationForm
 from datetime import datetime
 from django.core.paginator import Paginator
-from .models import Product, Competitor_URL
-from .tasks import UpdateDB
+from .models import *
+from .tasks import *
 from django.db.models import Q, Count
 from django.http import HttpResponseRedirect
 from django.urls import reverse
@@ -181,49 +181,120 @@ def redirecttoproduct(request, sku):
 @login_required(login_url='thenx:login')
 def rules_view(request):
     totalcomps = [_ for _ in range(Competitor_URL.objects.order_by('comp_name').values_list("comp_name", flat=True).distinct().count())]
+    testcelery.delay()
     return render(request, 'thenx/rules.html', {'totalcomps':totalcomps})
 
 def rules_parser(request):
     if request.method == "POST":
-        print(request.POST.dict)
-        pass
-
-    return render(request, 'thenx/rules_parser.html', )
+        dict = request.POST.dict()
+        priceshouldbe = dict["HL1"]
+        than = dict["than1"]
+        thantype = dict["thantype"]
+        thanHL = dict["HL2"]
+        competitor = dict["comp"]
+        butnotlowerthan = dict["notlowerthan"]
+        butnotlowerthantype = dict["notlowerthantype"]
+        ob = competitorrules.objects.filter(competitor=competitor, priceshouldbe=priceshouldbe, thanHL=thanHL, butnotlowerthan=butnotlowerthan).first()
+        if ob:
+            ob.than = than
+            ob.thantype = thantype
+            ob.butnotlowerthantype = butnotlowerthantype
+        else:
+            ob = competitorrules.objects.create(priceshouldbe=priceshouldbe, than=than, thantype=thantype, thanHL=thanHL,
+                                                competitor=competitor, butnotlowerthan=butnotlowerthan, butnotlowerthantype=butnotlowerthantype)
+        ob.save()
+    rules = competitorrules.objects.all()
+    return render(request, 'thenx/rules_parser.html', {"rules": rules})
 
 def rules_price_list(request):
     if request.method == "POST":
+        dict = request.POST.dict()
+        localcosttype = dict["localcosttype"]
+        localcost = dict["cost"]
+        type = dict["costtype"]
+        ifsuppriceis = dict["HL"]
+        than = dict["than"]
+        thantype = dict["thantype"]
+        supplier = dict["supplier"]
+        ob = pricelistrules.objects.filter(supplier=supplier, localcosttype=localcosttype).first()
+        if ob:
+            ob.localcost = localcost
+            ob.type = type
+            ob.ifsuppriceis = ifsuppriceis
+            ob.than = than
+            ob.thantype = thantype
+        else:
+            ob = pricelistrules.objects.create(localcosttype=localcosttype, localcost=localcost, type=type, ifsuppriceis=ifsuppriceis,
+                                               than=than, thantype=thantype, supplier=supplier)
+        ob.save()
         pass
     suppliers = list(Product.objects.order_by('supplier').values_list("supplier", flat=True).distinct())
-    return render(request, 'thenx/rules_pricelist.html', {"suppliers":suppliers})
+    rules = pricelistrules.objects.all()
+    return render(request, 'thenx/rules_pricelist.html', {"suppliers": suppliers, "rules": rules})
 
 def rules_margins(request):
-    if request.method == "POST":
-        pass
+    try:
+        if request.method == "POST":
+            dict = request.POST.dict()
+            if dict["supcat"] == '' and dict["sku"] == '':
+                messages.error(request, "Please select a supplier/category/sku.")
+                raise Exception
+            whichprice = dict["whichprice"]
+            price = dict["cost"]
+            pricetype = dict["pricetype"]
+            appliedon = dict["appliedon"]
+            if appliedon == 'sku':
+                value = dict["sku"]
+            else:
+                value = dict["supcat"]
 
-    return render(request, 'thenx/rules_margin.html', )
+            ob = marginrules.objects.filter(whichprice=whichprice,appliedon=appliedon, value=value).first()
+            if ob:
+                ob.whichprice = whichprice
+                ob.price = price
+                ob.pricetype = pricetype
+            else:
+                ob = marginrules.objects.create(whichprice=whichprice, price=price, pricetype=pricetype, appliedon=appliedon, value=value)
+            ob.save()
+            pass
+    except:
+        pass
+    rules = marginrules.objects.all()
+    return render(request, 'thenx/rules_margin.html', {"rules": rules})
 
 def rules_vat(request):
     if request.method == "POST":
         vat = request.POST.get("vat")
-        print(vat)
-    return render(request, 'thenx/rules_vat.html', )
+        if vatrules.objects.exists():
+            ob = vatrules.objects.first()
+            ob.vat = vat
+        else:
+            ob = vatrules.objects.create(vat=vat)
+        ob.save()
+    rules = vatrules.objects.all()
+    return render(request, 'thenx/rules_vat.html', {"rules": rules})
 
 def rules_warranty(request):
     if request.method == 'POST':
-        warranty = request.POST.get("warranty")
-        print(warranty)
-        applyon = request.POST["applyon"]
-        if applyon == 'sup' or applyon == 'cat':
-            applyon = request.POST["supcat"]
-        elif applyon == 'sku':
-            applyon = request.POST.get("sku")
+        dict = request.POST.dict()
+        if dict["supcat"] == '' and dict["sku"] == '':
+            messages.error(request, "Please select a supplier/category/sku.")
+            raise Exception
+        warranty = dict["warranty"]
+        appliedon = dict["applyon"]
+        if appliedon == 'sku':
+            value = dict["sku"]
         else:
-            pass
-        print(applyon)
-        value = request.POST.get("value")
-        print(value)
+            value = dict["supcat"]
+        ob = warrantyrules.objects.filter(appliedon=appliedon, value=value)
+        if ob:
+            ob.warranty = warranty
+        else:
+            ob = warrantyrules.objects.create(days=warranty, appliedon=appliedon, value=value)
+        ob.save()
 
-    return render(request, 'thenx/rules_warranty.html', )
+    rules = warrantyrules.objects.all()
+    return render(request, 'thenx/rules_warranty.html', {"rules": rules})
 
 
 def getDetails(request):
@@ -246,3 +317,22 @@ def validateSKU(request):
         return HttpResponse(json.dumps({"result": "False"}), content_type='application/json')
     else:
         return HttpResponse(json.dumps({"result": "True"}), content_type='application/json')
+
+def deleterule(request, ruleid, rule):
+    if rule == "margin":
+        marginrules.objects.get(pk=ruleid).delete()
+        return redirect("thenx:marginsrules")
+    elif rule == "parser":
+        competitorrules.objects.get(pk=ruleid).delete()
+        return redirect("thenx:parserrules")
+    elif rule == "pricelist":
+        pricelistrules.objects.get(pk=ruleid).delete()
+        return redirect("thenx:pricelistrules")
+    elif rule == "vat":
+        vatrules.objects.get(pk=ruleid).delete()
+        return redirect("thenx:vatrules")
+    elif rule == "warranty":
+        warrantyrules.objects.get(pk=ruleid).delete()
+        return redirect("thenx:warrantyrules")
+    else:
+        print("Error")

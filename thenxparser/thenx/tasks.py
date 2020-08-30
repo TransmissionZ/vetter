@@ -1,6 +1,7 @@
 from __future__ import absolute_import, unicode_literals
 from celery.schedules import crontab
 from celery.task import periodic_task
+from celery.task import task
 import requests
 import json
 from django.utils import timezone
@@ -9,11 +10,11 @@ from django.db.models import Count
 from bs4 import BeautifulSoup as soup
 
 
-# @periodic_task(
-#     run_every=(crontab(minute='*/60')),
-#     name="updatedb",
-#     ignore_result=True
-# )
+@periodic_task(
+    run_every=(crontab(minute='*/60')),
+    name="updatedb",
+    ignore_result=True
+)
 def UpdateDB():
     print("Updating Database")
     # p = Product(SKU=123, name="TEST NAME", price=1000.1, originalurl='www.thenx.com',
@@ -69,3 +70,6 @@ def UpdateDB():
                         category=json.loads(product['cat']), supplier=product['supplier'], base_cost=cost)
             p.save()
 
+@task(name="testcelery")
+def testcelery():
+    print("TEST BABES")

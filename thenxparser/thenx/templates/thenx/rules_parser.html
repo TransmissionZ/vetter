@@ -7,16 +7,16 @@
 
 {% block dashcontent %}
     <form action="{% url 'thenx:parserrules' %}" method="post">
-    {% csrf_token %}
+        {% csrf_token %}
         <div class="row form-group col-md-16">
-            <label for="selectSm" class="form-control-label" style="padding-left: 1.4%">Rule 1: My price should
+            <label for="selectSm" class="form-control-label" style="padding-left: 1.4%">My price should
                 be</label>
             <div class="col-12 col-md-1">
                 <select name="HL1" id="HL" class="form-control-sm form-control" required>
-                    <option value="0" disabled selected>Select Range</option>
-                    <option value="1">Higher</option>
-                    <option value="2">Average</option>
-                    <option value="2">Cheaper</option>
+                    {#                    <option value="0" disabled selected>Select Range</option>#}
+                    <option value="higher">Higher</option>
+                    <option value="average">Average</option>
+                    <option value="cheaper">Cheaper</option>
                 </select>
             </div>
 
@@ -27,10 +27,10 @@
 
 
             <div class="col-8 col-md-1">
-                <select name="thantype" id="SelectLm2" class="form-control-sm form-control">
-                    <option value="0">Type</option>
-                    <option value="1">RON</option>
-                    <option value="2">%</option>
+                <select name="thantype" id="SelectLm2" class="form-control-sm form-control" required>
+                    {#                    <option value="0">Type</option>#}
+                    <option value="Ron">RON</option>
+                    <option value="%">%</option>
                 </select>
             </div>
 
@@ -38,20 +38,20 @@
 
 
             <div class="col-8 col-md-1">
-                <select name="selectSm2" id="SelectLm2" class="form-control-sm form-control">
-                    <option value="0">Please select</option>
-                    <option value="1">Highest</option>
-                    <option value="2">Cheapest</option>
-                    <option value="2">Average</option>
+                <select name="HL2" id="SelectLm2" class="form-control-sm form-control" required>
+                    {#                    <option value="0">Please select</option>#}
+                    <option value="highest" selected>Highest</option>
+                    <option value="cheapest">Cheapest</option>
+                    <option value="average">Average</option>
                 </select>
             </div>
 
             <label for="selectSm" class=" form-control-label">of</label>
             <div class="col-8 col-md-1">
-                <select name="selectSm2" id="SelectLm2" class="form-control-sm form-control">
-                    <option value="all">All Competitors</option>
+                <select name="comp" id="SelectLm2" class="form-control-sm form-control" required>
+                    <option value="all Competitors" selected>All Competitors</option>
                     {% for _ in totalcomps %}
-                        <option value="{{ forloop.counter }}">{{ forloop.counter }}</option>
+                        <option value="{{ forloop.counter }} Competitors">{{ forloop.counter }} Competitors</option>
                     {% endfor %}
                 </select>
             </div>
@@ -59,16 +59,15 @@
             <label for="selectSm" class=" form-control-label">but it should not be lower than my final cost +</label>
 
             <div class="col col-sm-1">
-                <input type="text" id="input-small" name="input-small" placeholder="RON / %"
+                <input type="text" id="input-small" name="notlowerthan" placeholder="RON / %"
                        class="input-sm form-control-sm form-control">
             </div>
 
 
             <div class="col-8 col-md-1">
-                <select name="selectSm2" id="SelectLm2" class="form-control-sm form-control">
-                    <option value="0">Type</option>
-                    <option value="1">RON</option>
-                    <option value="2">%</option>
+                <select name="notlowerthantype" id="SelectLm2" class="form-control-sm form-control">
+                    <option value="Ron" selected>RON</option>
+                    <option value="%">%</option>
                 </select>
             </div>
 
@@ -78,6 +77,40 @@
             <i class="fa fa-magic"></i>&nbsp; Add rule
         </button>
     </form>
+    <hr>
+    <br><br>
 
+    {#    Applied Rules List  #}
+
+    <div class="col-md-12">
+        {% if rules.count != 0 %}
+            <div class="vue-lists">
+                <div class="row">
+                    <div class="col-md-12">
+                        <h2 class="mb-4">Applied Rules:</h2>
+                        <ul>
+                            {% for r in rules %}
+                                <li>
+
+                                    <form action="{% url 'thenx:deleterule' ruleid=r.pk rule="parser" %}"
+                                          method="post">
+                                        My price should be {{ r.priceshouldbe }} {{ r.than }} {{ r.thantype }}
+                                        than {{ r.thanHL }} of {{ r.competitor }} but it should not be lower than final cost
+                                        + {{ r.butnotlowerthan }} {{ r.butnotlowerthantype }}
+                                        {% csrf_token %}
+                                        <button class="item" data-toggle="tooltip" data-placement="top" title="Delete">
+                                            <i class="zmdi zmdi-delete"></i>
+                                        </button>
+                                    </form>
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        {% else %}
+            <h3 class="mb-auto">No Rules Applied.</h3>
+        {% endif %}
+    </div>
 
 {% endblock dashcontent %}

@@ -237,7 +237,7 @@
                     $("#supcatdiv").show();
                     $.getJSON("{% url 'thenx:details' %}", {'choice': $(this).val()}, function (j) {
                         for (var i = 0; i < j.length; i++) {
-                            options += '<option value="' + i + '">' + j[i] + '</option>';
+                            options += '<option value="' + j[i] + '">' + j[i] + '</option>';
                         }
                         // inspect html to check id of subcategory select dropdown.
                         $("select#supcat").html(options);
@@ -265,7 +265,7 @@
                     $("#supcatdiv2").show();
                     $.getJSON("{% url 'thenx:details' %}", {'choice': $(this).val()}, function (j) {
                         for (var i = 0; i < j.length; i++) {
-                            options += '<option value="' + i + '">' + j[i] + '</option>';
+                            options += '<option value="' + j[i] + '">' + j[i] + '</option>';
                         }
                         // inspect html to check id of subcategory select dropdown.
                         $("select#supcat2").html(options);

@@ -7,7 +7,7 @@
 
 {% block dashcontent %}
     <form action="{% url 'thenx:warrantyrules' %}" method="post">
-    {% csrf_token %}
+        {% csrf_token %}
         <div class="row form-group col-md-16">
             <label for="selectSm3" class="form-control-label" style="padding-left: 1.4%">Set Warranty</label>
             <div class="col col-sm-2">
@@ -17,7 +17,7 @@
             <label for="selectSm2" class="form-control-label">For</label>
             <div class="col-8 col-md-2">
                 <select name="applyon" id="selection" class="form-control-sm form-control" required>
-                    <option value="0">select</option>
+                    <option value="0" selected disabled>select</option>
                     <option value="sup">Supplier</option>
                     <option value="cat">Category</option>
                     <option value="sku">Product SKU</option>
@@ -29,17 +29,55 @@
                 </select>
             </div>
             <div class="col col-sm-1" id="skuinput" style="display: none">
-                <input type="number" name="sku" id="sku" placeholder="SKU Input"
+                <input type="number" name="sku" id="sku" placeholder="SKU"
                        class="input-sm form-control-sm form-control">
             </div>
+            {% if messages %}
+                {% for message in messages %}
+                    <span class="badge badge-danger">{{ message }}</span>
+                {% endfor %}
+            {% endif %}
             <span class="badge badge-danger" style="display: none" id="skuerror">This Product SKU does not Exist</span>
         </div>
-        <input type="hidden" name="url" value="{% url 'thenx:warrantyrules' %}">
-        <input type="hidden" name="type" value="warranty">
-        <button type="button" onclick="this.form.submit()" class="col-md-12 btn btn-outline-success btn-sm" style="right: 0%">
+        <button type="submit" class="col-md-12 btn btn-outline-success btn-sm"
+                style="right: 0%">
             <i class="fa fa-magic"></i>&nbsp; Add rule
         </button>
     </form>
+    <hr>
+    <br><br>
 
+    {#    Applied Rules List  #}
+
+    <div class="col-md-12">
+        {% if rules.count != 0 %}
+            <div class="vue-lists">
+                <div class="row">
+                    <div class="col-md-6">
+                        <h2 class="mb-4">Applied Rules:</h2>
+                        <ul>
+                            {% for r in rules %}
+                                <li>
+                                    <form action="{% url 'thenx:deleterule' ruleid=r.pk rule="warranty" %}"
+                                          method="post">
+                                        {% csrf_token %}
+                                        Set warranty of {{ r.days }} on
+                                        {% if r.appliedon == "sup" %} Supplier {% elif r.appliedon == "cat" %}
+                                        Category {% else %} Product SKU {% endif %}: {{ r.value }}
+
+                                        <button class="item" data-toggle="tooltip" data-placement="top" title="Delete">
+                                            <i class="zmdi zmdi-delete"></i>
+                                        </button>
+                                    </form>
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        {% else %}
+            <h3 class="mb-auto">No Rules Applied.</h3>
+        {% endif %}
+    </div>
 
 {% endblock dashcontent %}

@@ -5,6 +5,8 @@ from django.utils import timezone
 from .scrappers import *
 from django_mysql.models import JSONField
 import math
+
+
 # Create your models here.
 
 def normal_round(n):
@@ -29,7 +31,6 @@ class Product(models.Model):
         self.price = price
         self.dateupdated = datetime.now().strftime("%d/%m/%Y %H:%M")
 
-
     def __str__(self):
         return self.name
 
@@ -42,6 +43,7 @@ class Product(models.Model):
 
         def __unicode__(self):
             return self.name
+
 
 class Price_List(models.Model):
     RON = "RON"
@@ -57,14 +59,14 @@ class Price_List(models.Model):
     localcostsuppliertype = models.CharField(max_length=3, choices=TYPE_CHOICE, default=RON)
     localcostthenx = models.FloatField(default=0.0)
     localcostthenxtype = models.CharField(max_length=4, choices=TYPE_CHOICE, default=RON)
-    wsprice = models.FloatField(default=0.0) #Whole Sale
+    wsprice = models.FloatField(default=0.0)  # Whole Sale
     wspricetype = models.CharField(max_length=4, choices=TYPE_CHOICE, default=RON)
     retailprice = models.FloatField(default=0.0)
     retailpricetype = models.CharField(max_length=4, choices=TYPE_CHOICE, default=RON)
     warranty = models.IntegerField(default=0)
     vat = models.FloatField(default=0.0)
     allproductcost = models.FloatField(default=0.0)
-    gpws = models.FloatField(default=0.0) # Gross Profit Wholesale
+    gpws = models.FloatField(default=0.0)  # Gross Profit Wholesale
     margin_ws = models.FloatField(default=0.0)
     gp_shop = models.FloatField(default=0.0)
     margin_shop = models.FloatField(default=0.0)
@@ -78,20 +80,20 @@ class Price_List(models.Model):
             self.finalprice += self.localcostsupplier
         else:
             if self.localcostsupplier != 0.0:
-                self.finalprice *= 1 + self.localcostsupplier/100
+                self.finalprice *= 1 + self.localcostsupplier / 100
         if self.localcostthenxtype == self.RON:
             self.finalprice += self.localcostthenx
         else:
             if self.localcostthenx != 0.0:
-                self.finalprice *= 1 + self.localcostthenx/100
+                self.finalprice *= 1 + self.localcostthenx / 100
         if self.vat != 0.0:
-            self.finalprice *= 1 + self.vat/100
+            self.finalprice *= 1 + self.vat / 100
         self.allproductcost = self.finalprice
         if self.wspricetype == self.RON:
             self.finalprice += self.wsprice
         else:
             if self.wsprice != 0.0:
-                self.finalprice *= 1 + self.wsprice/100
+                self.finalprice *= 1 + self.wsprice / 100
         self.finalprice = normal_round(self.finalprice)
         if self.retailpricetype == self.RON:
             self.finalprice += self.retailprice
@@ -102,8 +104,10 @@ class Price_List(models.Model):
         self.finalprice = normal_round(self.finalprice)
         self.finalprice = self.finalprice - 0.01
         self.gpws = self.allproductcost - self.wsprice
-        self.margin_ws = normal_round(((self.finalprice - self.allproductcost)/self.finalprice)*100)
+        self.margin_ws = normal_round(((self.finalprice - self.allproductcost) / self.finalprice) * 100)
         return super(Price_List, self).save(*args, **kwargs)
+
+
 class Competitor_URL(models.Model):
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
     url = models.TextField()
@@ -145,8 +149,6 @@ class Competitor_URL(models.Model):
         print(self.comp_price)
         self.save()
 
-
-
     def save(self, *args, **kwargs):
         self.lastupdated = timezone.now()
         try:
@@ -166,7 +168,7 @@ class Competitor_URL(models.Model):
             n = self.url.find('/')
             if n < 8:
                 n1 = self.url.find('.')
-                self.comp_name = self.url[n+2:n1]
+                self.comp_name = self.url[n + 2:n1]
             else:
                 n1 = self.url.find('.')
                 self.comp_name = self.url[:n1]
@@ -175,7 +177,6 @@ class Competitor_URL(models.Model):
 
 class vatrules(models.Model):
     vat = models.IntegerField(default=0)
-
 
 class warrantyrules(models.Model):
     CAT = "CAT"
@@ -190,6 +191,7 @@ class warrantyrules(models.Model):
     days = models.IntegerField(default=0)
     appliedon = models.CharField(max_length=3, choices=CHOICES, default=SKU)
     value = models.TextField(default='')
+
 
 class marginrules(models.Model):
     CAT = "CAT"
@@ -206,11 +208,18 @@ class marginrules(models.Model):
         (RON, "Ron"),
         (P, "%")
     )
-    wsprice = models.FloatField(default=0.0)
-    wspricetype = models.CharField(max_length=4, choices=TYPE_CHOICE, default=RON)
-    retailprice = models.FloatField(default=0.0)
-    retailpricetype = models.CharField(max_length=4, choices=TYPE_CHOICE, default=RON)
-    supplier = models.TextField(default='')
+    WS = "WHOLESALE"
+    RETAIL = "RETAIL"
+    whichpricechoices = (
+        (WS, "Wholesale"),
+        (RETAIL, "Retail")
+    )
+    whichprice = models.CharField(max_length=10, choices=whichpricechoices, default=WS)
+    price = models.FloatField(default=0.0)
+    pricetype = models.CharField(max_length=4, choices=TYPE_CHOICE, default=RON)
+    appliedon = models.CharField(max_length=3, choices=CHOICES, default=SKU)
+    value = models.TextField(default='')
+
 
 class pricelistrules(models.Model):
     HIGH = "HIGH"
@@ -233,13 +242,14 @@ class pricelistrules(models.Model):
         (SUP, "Supplier"),
         (THENX, "Thenx")
     )
-    localcosttype = models.CharField(max_length=15, choices=OPTIONS, default=SUP    )
+    localcosttype = models.CharField(max_length=15, choices=OPTIONS, default=SUP)
     localcost = models.FloatField(default=0.0)
     type = models.CharField(max_length=4, choices=TYPE_CHOICE, default=RON)
     ifsuppriceis = models.CharField(max_length=7, choices=HLCHOICES, default=HIGH)
     than = models.FloatField(default=0.0)
     thantype = models.CharField(max_length=4, choices=TYPE_CHOICE, default=RON)
     supplier = models.TextField(default='')
+
 
 class competitorrules(models.Model):
     HIGH = "HIGH"
@@ -265,8 +275,7 @@ class competitorrules(models.Model):
     priceshouldbe = models.CharField(max_length=7, choices=HLCHOICES, default=HIGH)
     than = models.FloatField(default=0.0)
     thantype = models.CharField(max_length=4, choices=TYPE_CHOICE, default=RON)
-    thenHL = models.CharField(max_length=7, choices=HLCHOICES, default=HIGH)
+    thanHL = models.CharField(max_length=7, choices=HLCHOICES, default=HIGH)
     competitor = models.TextField(default='')
     butnotlowerthan = models.FloatField(default=0.0)
     butnotlowerthantype = models.CharField(max_length=4, choices=TYPE_CHOICE, default=RON)
-    pass
