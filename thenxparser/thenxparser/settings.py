@@ -9,7 +9,7 @@ https://docs.djangoproject.com/en/3.0/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/3.0/ref/settings/
 """
-from huey import RedisHuey
+from huey import RedisHuey, SqliteHuey
 from redis import ConnectionPool
 import os
 
@@ -76,17 +76,27 @@ WSGI_APPLICATION = 'thenxparser.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/3.0/ref/settings/#databases
 
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.mysql',
+#         'NAME': 'thenx', #os.path.join(BASE_DIR, 'thenxappMariaDB'),
+#         'USER': 'thenxdefault',
+#         'PASSWORD': 'ThenX.011',
+#         'HOST': '',
+#         'PORT': '',
+#     }
+# }
+
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'thenx', #os.path.join(BASE_DIR, 'thenxappMariaDB'),
-        'USER': 'thenxdefault',
-        'PASSWORD': 'ThenX.011',
-        'HOST': '',
+        'NAME': 'thenx_python', #os.path.join(BASE_DIR, 'thenxappMariaDB'),
+        'USER': 'thenx_pythonapp',
+        'PASSWORD': ')1Zuzc{{tI!V',
+        'HOST': 'localhost',
         'PORT': '',
     }
 }
-
 
 # Password validation
 # https://docs.djangoproject.com/en/3.0/ref/settings/#auth-password-validators
@@ -142,5 +152,6 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 #         },
 # }
 
-pool = ConnectionPool(host='localhost', port=6379, max_connections=20)
-HUEY = RedisHuey('thenxparser', connection_pool=pool, immediate=False)
+# pool = ConnectionPool(host='localhost', port=6379, max_connections=20)
+# HUEY = RedisHuey('thenxparser', connection_pool=pool, immediate=False)
+HUEY = SqliteHuey()
