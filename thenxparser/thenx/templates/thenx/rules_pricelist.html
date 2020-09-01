@@ -46,27 +46,41 @@
             <label for="selectSm" class=" form-control-label">than</label>
 
             <div class="col col-sm-1">
-                <input type="text" id="input-small" name="than" placeholder="RON / %"
+                <input type="text" id="input-small" name="than" placeholder="RON"
                        class="input-sm form-control-sm form-control" required>
             </div>
 
 
-            <div class="col-8 col-md-1">
-                <select name="thantype" id="SelectLm2" class="form-control-sm form-control" required>
-                    <option value="Ron" selected>RON</option>
-                    <option value="%">%</option>
-                </select>
-            </div>
+{#            <div class="col-8 col-md-1">#}
+{#                <select name="thantype" id="SelectLm2" class="form-control-sm form-control" required>#}
+{#                    <option value="Ron" selected>RON</option>#}
+{#                    <option value="%">%</option>#}
+{#                </select>#}
+{#            </div>#}
             <label for="selectSm" class=" form-control-label">for</label>
             <div class="col-8 col-md-2">
-                <select name="supplier" id="SelectLm2" class="form-control-sm form-control" required>
-                    <option value="0" selected disabled>Select Supplier</option>
-                    {% for s in suppliers %}
-                        <option value="{{ s }}">{{ s }}</option>
-                    {% endfor %}
+                <select name="applyon" id="selection" class="form-control-sm form-control" required>
+                    <option value="0" selected disabled>select</option>
+                    <option value="sup">Supplier</option>
+                    <option value="cat">Category</option>
+                    <option value="sku">Product SKU</option>
                 </select>
             </div>
 
+            <div class="col-8 col-md-2" id="supcatdiv" style="display: none">
+                <select name="supcat" id="supcat" class="form-control-sm form-control">
+                </select>
+            </div>
+            <div class="col col-sm-1" id="skuinput" style="display: none">
+                <input type="number" name="sku" id="sku" placeholder="SKU"
+                       class="input-sm form-control-sm form-control">
+            </div>
+            <span class="badge badge-danger" style="display: none" id="skuerror">This Product SKU does not Exist</span>
+            {% if messages %}
+                {% for message in messages %}
+                    <span class="badge badge-danger">{{ message }}</span>
+                {% endfor %}
+            {% endif %}
         </div>
 
         <button type="submit" class="col-md-12 btn btn-outline-success btn-sm"

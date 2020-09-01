@@ -15,171 +15,231 @@
             </div>
 
             {#    Search !!! #}
-            <div class="col-md-12">
-                <form class="row form-header" value="{{ request.GET.q }}" method="GET" style="padding-left: 1.1%">
-                    <div class="row rs-select2--light rs-select2--md">
-                        <select class="js-select2 form-control" name="brand" id="selectbrand"
-                                onchange="this.form.submit()">
-                            <option value="All" ; {% if request.GET.brand == None %}selected{% endif %}>All Brands
-                            </option>
-                            {% for o in brands %}
-                                <option value="{{ o }}"
-                                        {% if request.GET.brand == o %}selected{% endif %}>{{ o }}</option>
-                            {% endfor %}
-                        </select>
-                        <div class="dropDownSelect2"></div>
-                    </div>
-                    <div class="row col-md-12" style="padding-top: 5%; padding-left: 0">
-                        <input class="au-input au-input--xl" type="text" name="q" value="{{ request.GET.q }}"
-                               placeholder="Search for Products..."/>
-                        <button class="au-btn--submit" type="submit">
-                            <i class="zmdi zmdi-search"></i>
-                        </button>
-                    </div>
-                </form>
-            </div>
-            <hr>
-            <!-- DATA TABLE-->
-            <br>
-            {% for p in list %}
-                <div class="row" style="padding-left: 1.1%">
-                    <div class="card col-md-7">
-                        <div class="card-header">
-                            <strong class="card-title">{{ p.name }}
-                                <small>
-                                    <span class="badge badge-success float-right mt-1">Price Changed</span>
-                                </small>
-                            </strong>
+            <div class="row m-t-30">
+                <div class="col-md-12">
+                    <div class="table-data__tool-left">
+                        <div class="rs-select2--light rs-select2--md">
+                            <form value="{{ request.GET.brand }}" method="GET" id="brandform">
+                                <select class="js-select2 form-control" name="brand" id="selectbrand"
+                                        onchange="this.form.submit()">
+                                    <option value="All" ; {% if request.GET.brand == None %}selected{% endif %}>All
+                                        Brands
+                                    </option>
+                                    {% for o in brands %}
+                                        <option value="{{ o }}"
+                                                {% if request.GET.brand == o %}selected{% endif %}>{{ o }}</option>
+                                    {% endfor %}
+                                </select>
+                                <div class="dropDownSelect2"></div>
+                            </form>
                         </div>
-                        <div class="card-body">
-                            <p class="card-text">
-                                Brand: {{ p.brand }}
-                                <br>
-                                Last Updated: {{ p.dateupdated }}
-                                <br>
-                                SKU: {{ p.SKU }}
-                                <br>
-                                <br>
+                        <div class="rs-select2--light rs-select2--md">
+                            <form value="{{ request.GET.supplier }}" method="GET" id="brandform">
+                                <select class="js-select2 form-control" name="supplier" id="selectbrand"
+                                        onchange="this.form.submit()">
+                                    <option value="All" ; {% if request.GET.supplier == None %}selected{% endif %}>All
+                                        Suppliers
+                                    </option>
+                                    {% for o in suppliers %}
+                                        <option value="{{ o }}"
+                                                {% if request.GET.supplier == o %}selected{% endif %}>{{ o }}</option>
+                                    {% endfor %}
+                                </select>
+                                <div class="dropDownSelect2"></div>
+                            </form>
+                        </div>
+                        <div class="rs-select2--light rs-select2--md">
+                            <form value="{{ request.GET.category }}" method="GET" id="brandform">
+                                <select class="js-select2 form-control" name="category" id="selectbrand"
+                                        onchange="this.form.submit()">
+                                    <option value="All" ; {% if request.GET.category == None %}selected{% endif %}>All
+                                        Categories
+                                    </option>
+                                    {% for o in categories %}
+                                        <option value="{{ o }}"
+                                                {% if request.GET.category == o %}selected{% endif %}>{{ o }}</option>
+                                    {% endfor %}
+                                </select>
+                                <div class="dropDownSelect2"></div>
+                            </form>
+                        </div>
+                    </div>
+                    <div class="table-data__tool-right">
+                        <form class="row form-header" value="{{ request.GET.q }}" method="GET"
+                              style="position:absolute; padding-right: 2%; right: 1%;">
+                            {#                    {% csrf_token %}#}
+                            <input class="au-input au-input--xl" type="text" name="q" value="{{ request.GET.q }}"
+                                   placeholder="Search for Products..."/>
+                            <button class="au-btn--submit" type="submit">
+                                <i class="zmdi zmdi-search"></i>
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <hr class="line-seprate">
+                <!-- DATA TABLE-->
+                <br><br>
+                {% for p in list %}
+                    <div class="row" style="padding-left: 1.1%">
+                        <div class="card col-md-7">
+                            <div class="card-header">
+                                <strong class="card-title">{{ p.name }}
+                                    <small>
+                                        <span class="badge badge-success float-right mt-1">Price Changed</span>
+                                    </small>
+                                </strong>
+                            </div>
+                            <div class="card-body">
+                                <p class="card-text">
+                                    Brand: {{ p.brand }}
+                                    <br>
+                                    Categories: {% for cat in p.category %} {{ cat }}{% if forloop.counter != p.category.len %},{% endif %} {% endfor %}
+                                    <br>
+                                    Supplier: {{ p.supplier }}
+                                    <br>
+                                    Last Updated: {{ p.dateupdated }}
+                                    <br>
+                                    SKU: {{ p.SKU }}
+                                    <br>
+                                    <br>
+                                    Highest Competitor Price: {{ p.highestcompprice }}<br>
+                                    Lowest Competitor Price: {{ p.lowestcompprice }}<br>
+                                    Average Competitor Price: {{ p.avgcompprice }}<br><br>
                                 <form action="{% url 'thenx:setimp' %}" method="get">
                                     <label class="switch switch-3d switch-primary mr-3">
-                                      <input type="checkbox" class="switch-input" {% if p.important == 1 %}checked{% endif %}>
+                                        <input type="checkbox" class="switch-input"
+                                               {% if p.important == 1 %}checked{% endif %}>
                                         <input type="hidden" name="pk" value="{{ p.SKU }}">
-                                      <span class="switch-label"></span>
-                                      <span class="switch-handle"></span>
+                                        <span class="switch-label"></span>
+                                        <span class="switch-handle"></span>
                                     </label>
                                     IMPORTANCE
                                 </form>
                                 <br>
                                 <br>
-                            <h6>
-                                <del>Old Price: {{ p.price }} RON</del>
-                            </h6>
-                            <h5>New Price: {{ p.price }} RON</h5>
-                            </p>
+                            {% if p.price != p.price_list_set.first.finalprice %}
+                                <h6>
+                                    <del>Old Price: {{ p.price }} RON</del>
+                                </h6>
+                                <h5>New Price: {{ p.price_list_set.first.finalprice }} RON</h5>
+                            {% else %}
+                                <h5>Price: {{ p.price }} RON</h5>
+                            {% endif %}
+                            {% if p.price_list_set.competitorprice != 0.0 %}
+                                <br>
+                                <h5>SmartPrice: {{ p.price_list_set.first.competitorprice }} RON</h5>
+
+                            {% endif %}
+                                </p>
+
+                            </div>
                         </div>
                     </div>
-                </div>
-                <div class="row" style="">
-                    <div class="col-md-12">
-                        <h3 class="title-5 m-b-35">competitors</h3>
-                        <div class="table-data__tool">
-                            <div class="table-data__tool-right">
-                                <button data-toggle="collapse" data-target="#addurl{{ forloop.counter }}"
-                                        aria-expanded="false" aria-controls="addurl{{ forloop.counter }}"
-                                        class="au-btn au-btn-icon au-btn--green au-btn--small">
-                                    <i class="zmdi zmdi-plus"></i>add competitor
-                                </button>
-                                <div class="collapse" id="addurl{{ forloop.counter }}">
-                                    <br>
-                                    {#                                    URL INPUT #}
-                                    <div class="row form-group">
-                                        <div class="col col-md-12">
-                                            <form id="addurlform{{ forloop.counter }}" method="post">
-                                                {% csrf_token %}
-                                                <div class="input-group">
-                                                    <input onblur="checkURL(this)" type="url" id="url" name="url"
-                                                           placeholder="Competitor URL" class="form-control">
-                                                    &nbsp;
-                                                    <input type="hidden" name="product" class="form-control"
-                                                           value="{{ p.SKU }}">
-                                                    <div class="input-group-btn">
-                                                        <button class="btn btn-primary">
-                                                            Submit
-                                                        </button>
+                    <div class="row" style="">
+                        <div class="col-md-12">
+                            <h3 class="title-5 m-b-35">competitors</h3>
+                            <div class="table-data__tool">
+                                <div class="table-data__tool-right">
+                                    <button data-toggle="collapse" data-target="#addurl{{ forloop.counter }}"
+                                            aria-expanded="false" aria-controls="addurl{{ forloop.counter }}"
+                                            class="au-btn au-btn-icon au-btn--green au-btn--small">
+                                        <i class="zmdi zmdi-plus"></i>add competitor
+                                    </button>
+                                    <div class="collapse" id="addurl{{ forloop.counter }}">
+                                        <br>
+                                        {#                                    URL INPUT #}
+                                        <div class="row form-group">
+                                            <div class="col col-md-12">
+                                                <form id="addurlform{{ forloop.counter }}" method="post">
+                                                    {% csrf_token %}
+                                                    <div class="input-group">
+                                                        <input onblur="checkURL(this)" type="url" id="url"
+                                                               name="url"
+                                                               placeholder="Competitor URL" class="form-control">
+                                                        &nbsp;
+                                                        <input type="hidden" name="product" class="form-control"
+                                                               value="{{ p.SKU }}">
+                                                        <div class="input-group-btn">
+                                                            <button class="btn btn-primary">
+                                                                Submit
+                                                            </button>
+                                                        </div>
                                                     </div>
-                                                </div>
-                                            </form>
+                                                </form>
+                                            </div>
                                         </div>
                                     </div>
+
+                                    {% if messages %}
+                                        {% for message in messages %}
+                                            <span class="badge badge-danger">{{ message }}</span>
+                                        {% endfor %}
+                                    {% endif %}
                                 </div>
 
-                            {% if messages %}
-                                {% for message in messages %}
-                                    <span class="badge badge-danger">{{ message }}</span>
-                                {% endfor %}
-                            {% endif %}
                             </div>
+                            <div class="table-responsive table-responsive-data2">
+                                {% if p.competitor_url_set.count != 0 %}
+                                    <table class="table table-data3">
 
-                        </div>
-                        <div class="table-responsive table-responsive-data2">
-                            {% if p.competitor_url_set.count != 0 %}
-                                <table class="table table-data3">
-
-                                    <thead>
-                                    <tr>
-                                        <th>SKU</th>
-                                        <th>Competitor</th>
-                                        <th>URL</th>
-                                        <th>last update</th>
-                                        <th>price</th>
-                                        <th></th>
-                                    </tr>
-                                    </thead>
-                                    <tbody>
-
-                                    {% for comp in p.competitor_url_set.all %}
-                                        <tr class="tr-shadow">
-                                            <td>{{ p.SKU }}</td>
-                                            <td>
-                                                <span class="block-email">{{ comp.comp_name }}</span>
-                                            </td>
-                                            <td class="desc">{{ comp.url }}</td>
-                                            {#                                    <td></td>#}
-                                            <td>
-                                                <span class="status--process">{{ comp.lastupdated }}</span>
-                                            </td>
-                                            <td>{{ comp.comp_price }}</td>
-                                            <td>
-                                                <div class="table-data-feature">
-                                                    <form action="{% url 'thenx:deleteurl' urlid=comp.pk %}"
-                                                          method="post">
-                                                        {% csrf_token %}
-                                                        <button class="item" data-toggle="tooltip" data-placement="top"
-                                                                title="Delete">
-                                                            <i class="zmdi zmdi-delete"></i>
-                                                        </button>
-                                                        {% if request.GET.brand and request.GET.q %}
-                                                            <input type="hidden" name="brand"
-                                                                   value="{{ request.GET.brand }}">
-                                                            <input type="hidden" name="q" value="{{ request.GET.q }}">
-                                                        {% endif %}
-                                                    </form>
-                                                </div>
-                                            </td>
+                                        <thead>
+                                        <tr>
+                                            <th>SKU</th>
+                                            <th>Competitor</th>
+                                            <th>URL</th>
+                                            <th>last update</th>
+                                            <th>price</th>
+                                            <th></th>
                                         </tr>
-                                        <tr class="spacer"></tr>
-                                    {% endfor %}
+                                        </thead>
+                                        <tbody>
 
-                                </table>
-                            {% endif %}
+                                        {% for comp in p.competitor_url_set.all %}
+                                            <tr class="tr-shadow">
+                                                <td>{{ p.SKU }}</td>
+                                                <td>
+                                                    <span class="block-email">{{ comp.comp_name }}</span>
+                                                </td>
+                                                <td class="desc">{{ comp.url }}</td>
+                                                {#                                    <td></td>#}
+                                                <td>
+                                                    <span class="status--process">{{ comp.lastupdated }}</span>
+                                                </td>
+                                                <td>{{ comp.comp_price }}</td>
+                                                <td>
+                                                    <div class="table-data-feature">
+                                                        <form action="{% url 'thenx:deleteurl' urlid=comp.pk %}"
+                                                              method="post">
+                                                            {% csrf_token %}
+                                                            <button class="item" data-toggle="tooltip"
+                                                                    data-placement="top"
+                                                                    title="Delete">
+                                                                <i class="zmdi zmdi-delete"></i>
+                                                            </button>
+                                                            {% if request.GET.brand and request.GET.q %}
+                                                                <input type="hidden" name="brand"
+                                                                       value="{{ request.GET.brand }}">
+                                                                <input type="hidden" name="q"
+                                                                       value="{{ request.GET.q }}">
+                                                            {% endif %}
+                                                        </form>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                            <tr class="spacer"></tr>
+                                        {% endfor %}
+
+                                    </table>
+                                {% endif %}
+                            </div>
+                            <hr>
                         </div>
-                        <hr>
                     </div>
-                </div>
 
-            {% endfor %}
+                {% endfor %}
+            </div>
         </div>
-    </div>
     </div>
     </section>
     <!-- END DATA TABLE-->
@@ -212,24 +272,23 @@
                 return abc
             }
         </script>
-    <script type="application/javascript">
-        $(".switch-input").change(function (){
-            var chk = 0;
-            if($(this).is(":checked")){
-                chk = 1
-            }
-            else{
-                chk = 0
-            }
-            var form = $(this).closest("form");
-            var formdata = form.serializeArray()
-            formdata.push({name:'chk', value:chk})
-            $.ajax({
-                url: form.attr("action"),
-                data: formdata,
-                dataType: 'html',
+        <script type="application/javascript">
+            $(".switch-input").change(function () {
+                var chk = 0;
+                if ($(this).is(":checked")) {
+                    chk = 1
+                } else {
+                    chk = 0
+                }
+                var form = $(this).closest("form");
+                var formdata = form.serializeArray()
+                formdata.push({name: 'chk', value: chk})
+                $.ajax({
+                    url: form.attr("action"),
+                    data: formdata,
+                    dataType: 'html',
+                });
             });
-        });
-    </script>
+        </script>
     </div>
 {% endblock dashcontent %}

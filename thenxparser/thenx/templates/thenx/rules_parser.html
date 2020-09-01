@@ -15,7 +15,7 @@
                 <select name="HL1" id="HL" class="form-control-sm form-control" required>
                     {#                    <option value="0" disabled selected>Select Range</option>#}
                     <option value="higher">Higher</option>
-                    <option value="average">Average</option>
+{#                    <option value="average">Average</option>#}
                     <option value="cheaper">Cheaper</option>
                 </select>
             </div>
@@ -49,9 +49,9 @@
             <label for="selectSm" class=" form-control-label">of</label>
             <div class="col-8 col-md-1">
                 <select name="comp" id="SelectLm2" class="form-control-sm form-control" required>
-                    <option value="all Competitors" selected>All Competitors</option>
+                    <option value="all" selected>All Competitors</option>
                     {% for _ in totalcomps %}
-                        <option value="{{ forloop.counter }} Competitors">{{ forloop.counter }} Competitors</option>
+                        <option value="{{ forloop.counter }}">{{ forloop.counter }} Competitors</option>
                     {% endfor %}
                 </select>
             </div>
@@ -60,17 +60,42 @@
 
             <div class="col col-sm-1">
                 <input type="text" id="input-small" name="notlowerthan" placeholder="RON / %"
-                       class="input-sm form-control-sm form-control">
+                       class="input-sm form-control-sm form-control" required>
             </div>
 
 
             <div class="col-8 col-md-1">
-                <select name="notlowerthantype" id="SelectLm2" class="form-control-sm form-control">
+                <select name="notlowerthantype" id="SelectLm2" class="form-control-sm form-control" required>
                     <option value="Ron" selected>RON</option>
                     <option value="%">%</option>
                 </select>
             </div>
+        </div>
+        <div class="row form-group col-md-16" style="padding-left: 1.4%">
+        <label for="selectSm2" class="form-control-label">For</label>
+            <div class="col-8 col-md-2">
+                <select name="applyon" id="selection" class="form-control-sm form-control" required>
+                    <option value="0" selected disabled>select</option>
+                    <option value="sup">Supplier</option>
+                    <option value="cat">Category</option>
+                    <option value="sku">Product SKU</option>
+                </select>
+            </div>
 
+            <div class="col-8 col-md-2" id="supcatdiv" style="display: none">
+                <select name="supcat" id="supcat" class="form-control-sm form-control">
+                </select>
+            </div>
+            <div class="col col-sm-1" id="skuinput" style="display: none">
+                <input type="number" name="sku" id="sku" placeholder="SKU"
+                       class="input-sm form-control-sm form-control">
+            </div>
+            {% if messages %}
+                {% for message in messages %}
+                    <span class="badge badge-danger">{{ message }}</span>
+                {% endfor %}
+            {% endif %}
+            <span class="badge badge-danger" style="display: none" id="skuerror">This Product SKU does not Exist</span>
         </div>
 
         <button type="submit" class="col-md-12 btn btn-outline-success btn-sm" style="right: 0%">
@@ -95,8 +120,9 @@
                                     <form action="{% url 'thenx:deleterule' ruleid=r.pk rule="parser" %}"
                                           method="post">
                                         My price should be {{ r.priceshouldbe }} {{ r.than }} {{ r.thantype }}
-                                        than {{ r.thanHL }} of {{ r.competitor }} but it should not be lower than final cost
-                                        + {{ r.butnotlowerthan }} {{ r.butnotlowerthantype }}
+                                        than {{ r.thanHL }} of {{ r.competitor }} Competitors but it should not be lower than final cost
+                                        + {{ r.butnotlowerthan }} {{ r.butnotlowerthantype }} for {% if r.appliedon == "sup" %} Supplier {% elif r.appliedon == "cat" %}
+                                        Category {% else %} Product SKU {% endif %}: {{ r.value }}
                                         {% csrf_token %}
                                         <button class="item" data-toggle="tooltip" data-placement="top" title="Delete">
                                             <i class="zmdi zmdi-delete"></i>

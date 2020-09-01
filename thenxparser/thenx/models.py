@@ -5,8 +5,8 @@ from django.utils import timezone
 from .scrappers import *
 from django_mysql.models import JSONField
 import math
-
-
+# from .tasks import updatevat
+from huey.contrib.djhuey import periodic_task, task
 # Create your models here.
 
 def normal_round(n):
@@ -26,17 +26,26 @@ class Product(models.Model):
     important = models.BooleanField(default=False)
     category = JSONField(default=list)
     supplier = models.TextField(default='')
+    highestcompprice = models.FloatField(default=0.0)
+    lowestcompprice = models.FloatField(default=0.0)
+    avgcompprice = models.FloatField(default=0.0)
 
     def update_price(self, price):
         self.price = price
         self.dateupdated = datetime.now().strftime("%d/%m/%Y %H:%M")
 
+    def update_competitorprices(self):
+        prices = list(self.competitor_url_set.all().values_list("comp_price", flat=True))
+        print(prices)
+        prices = list(filter((0.0).__ne__, prices))
+        print(prices)
+        self.highestcompprice = max(p for p in prices)
+        self.lowestcompprice = min(p for p in prices)
+        self.avgcompprice = sum(prices) / len(prices)
+        self.save()
+
     def __str__(self):
         return self.name
-
-    def save(self, *args, **kwargs):
-        self.dateupdated = timezone.now()
-        return super(Product, self).save(*args, **kwargs)
 
     class Meta:
         ordering = ['name']
@@ -44,7 +53,9 @@ class Product(models.Model):
         def __unicode__(self):
             return self.name
 
+    def save(self, *args, **kwargs):
 
+        return super(Product, self).save(*args, **kwargs)
 class Price_List(models.Model):
     RON = "RON"
     P = "%"
@@ -53,8 +64,9 @@ class Price_List(models.Model):
         (P, "%")
     )
 
-    product = models.OneToOneField(Product, on_delete=models.CASCADE)
+    product = models.ForeignKey(Product, on_delete=models.CASCADE)
     finalprice = models.FloatField(default=0.0)
+    competitorprice = models.FloatField(default=0.0)
     localcostsupplier = models.FloatField(default=0.0)
     localcostsuppliertype = models.CharField(max_length=3, choices=TYPE_CHOICE, default=RON)
     localcostthenx = models.FloatField(default=0.0)
@@ -72,30 +84,31 @@ class Price_List(models.Model):
     margin_shop = models.FloatField(default=0.0)
 
     def __str__(self):
-        return self.finalprice
+        return str(self.finalprice)
 
     def save(self, *args, **kwargs):
         self.finalprice = self.product.base_cost
-        if self.localcostsuppliertype == self.RON:
+        self.product.dateupdated = timezone.now()
+        if self.localcostsuppliertype == self.RON and self.localcostsupplier != 0.0:
             self.finalprice += self.localcostsupplier
         else:
             if self.localcostsupplier != 0.0:
                 self.finalprice *= 1 + self.localcostsupplier / 100
-        if self.localcostthenxtype == self.RON:
+        if self.localcostthenxtype == self.RON and self.localcostthenx != 0.0:
             self.finalprice += self.localcostthenx
         else:
             if self.localcostthenx != 0.0:
                 self.finalprice *= 1 + self.localcostthenx / 100
         if self.vat != 0.0:
-            self.finalprice *= 1 + self.vat / 100
+            self.finalprice *= 1 + (self.vat / 100)
         self.allproductcost = self.finalprice
-        if self.wspricetype == self.RON:
+        if self.wspricetype == self.RON and self.wsprice != 0.0:
             self.finalprice += self.wsprice
         else:
             if self.wsprice != 0.0:
                 self.finalprice *= 1 + self.wsprice / 100
         self.finalprice = normal_round(self.finalprice)
-        if self.retailpricetype == self.RON:
+        if self.retailpricetype == self.RON and self.retailprice != 0.0:
             self.finalprice += self.retailprice
         else:
             if self.retailprice != 0.0:
@@ -151,6 +164,7 @@ class Competitor_URL(models.Model):
 
     def save(self, *args, **kwargs):
         self.lastupdated = timezone.now()
+        self.product.update_competitorprices()
         try:
             if 'www' in self.url:
                 if 'powerlaptop.ro' in self.url:
@@ -176,7 +190,8 @@ class Competitor_URL(models.Model):
 
 
 class vatrules(models.Model):
-    vat = models.IntegerField(default=0)
+    vat = models.FloatField(default=0)
+
 
 class warrantyrules(models.Model):
     CAT = "CAT"
@@ -242,6 +257,17 @@ class pricelistrules(models.Model):
         (SUP, "Supplier"),
         (THENX, "Thenx")
     )
+    CAT = "CAT"
+    SUP = "SUP"
+    SKU = "SKU"
+    CHOICES = (
+        (CAT, "cat"),
+        (SUP, "sup"),
+        (SKU, "sku")
+    )
+
+    appliedon = models.CharField(max_length=3, choices=CHOICES, default=SKU)
+    value = models.TextField(default='')
     localcosttype = models.CharField(max_length=15, choices=OPTIONS, default=SUP)
     localcost = models.FloatField(default=0.0)
     type = models.CharField(max_length=4, choices=TYPE_CHOICE, default=RON)
@@ -272,10 +298,20 @@ class competitorrules(models.Model):
         (SUP, "Supplier"),
         (THENX, "Thenx")
     )
+    CAT = "CAT"
+    SUP = "SUP"
+    SKU = "SKU"
+    CHOICES = (
+        (CAT, "cat"),
+        (SUP, "sup"),
+        (SKU, "sku")
+    )
     priceshouldbe = models.CharField(max_length=7, choices=HLCHOICES, default=HIGH)
     than = models.FloatField(default=0.0)
     thantype = models.CharField(max_length=4, choices=TYPE_CHOICE, default=RON)
-    thanHL = models.CharField(max_length=7, choices=HLCHOICES, default=HIGH)
+    thanHL = models.CharField(max_length=10, choices=HLCHOICES, default=HIGH)
     competitor = models.TextField(default='')
     butnotlowerthan = models.FloatField(default=0.0)
     butnotlowerthantype = models.CharField(max_length=4, choices=TYPE_CHOICE, default=RON)
+    appliedon = models.CharField(max_length=3, choices=CHOICES, default=SKU)
+    value = models.TextField(default='')

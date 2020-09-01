@@ -79,10 +79,43 @@
             <div class="table-data__tool-left" style="padding-left: 2%">
                 <div class="rs-select2--light rs-select2--md">
                     <form value="{{ request.GET.brand }}" method="GET" id="brandform">
-                        <select class="js-select2 form-control" name="brand" id="selectbrand" onchange="this.form.submit()" >
-                            <option value="All"; {% if request.GET.brand == None %}selected{% endif %}>All Brands</option>
+                        <select class="js-select2 form-control" name="brand" id="selectbrand"
+                                onchange="this.form.submit()">
+                            <option value="All" ; {% if request.GET.brand == None %}selected{% endif %}>All Brands
+                            </option>
                             {% for o in brands %}
-                                <option value="{{ o }}" {% if request.GET.brand == o %}selected{% endif %}>{{ o }}</option>
+                                <option value="{{ o }}"
+                                        {% if request.GET.brand == o %}selected{% endif %}>{{ o }}</option>
+                            {% endfor %}
+                        </select>
+                        <div class="dropDownSelect2"></div>
+                    </form>
+                </div>
+                <div class="rs-select2--light rs-select2--md">
+                    <form value="{{ request.GET.supplier }}" method="GET" id="brandform">
+                        <select class="js-select2 form-control" name="supplier" id="selectbrand"
+                                onchange="this.form.submit()">
+                            <option value="All" ; {% if request.GET.supplier == None %}selected{% endif %}>All
+                                Suppliers
+                            </option>
+                            {% for o in suppliers %}
+                                <option value="{{ o }}"
+                                        {% if request.GET.supplier == o %}selected{% endif %}>{{ o }}</option>
+                            {% endfor %}
+                        </select>
+                        <div class="dropDownSelect2"></div>
+                    </form>
+                </div>
+                <div class="rs-select2--light rs-select2--md">
+                    <form value="{{ request.GET.category }}" method="GET" id="brandform">
+                        <select class="js-select2 form-control" name="category" id="selectbrand"
+                                onchange="this.form.submit()">
+                            <option value="All" ; {% if request.GET.category == None %}selected{% endif %}>All
+                                Categories
+                            </option>
+                            {% for o in categories %}
+                                <option value="{{ o }}"
+                                        {% if request.GET.category == o %}selected{% endif %}>{{ o }}</option>
                             {% endfor %}
                         </select>
                         <div class="dropDownSelect2"></div>
@@ -100,6 +133,7 @@
                     </form>
                 </div>
             </div>
+
             <br>
             <br>
             <br>
@@ -112,14 +146,17 @@
                         <th>Name</th>
                         <th>Brand</th>
                         <th>Competitors</th>
+                        <th>Base Cost</th>
                         <th>price</th>
+                        <th>Competitor Price</th>
                         <th>Date Updated</th>
                     </tr>
                     </thead>
                     <tbody>
                     {% for p in list %}
                         <tr>
-                            <td><a href="{% url 'thenx:specificproduct' p.SKU %}" style="color: grey">{{ p.SKU }}</a></td>
+                            <td><a href="{% url 'thenx:specificproduct' p.SKU %}" style="color: grey">{{ p.SKU }}</a>
+                            </td>
                             <td><a href="{{ p.originalurl }}">{{ p.name }}</a></td>
                             <td>{{ p.brand }}</td>
                             <td class="process">
@@ -127,6 +164,8 @@
                                     {% if p.competitor_url_set.count != forloop.counter %},{% endif %}{% endfor %}
                             </td>
                             <td>{{ p.base_cost }}</td>
+                            <td>{{ p.price_list_set.first.finalprice }}</td>
+                            <td>{{ p.price_list_set.first.competitorprice }}</td>
                             <td>{{ p.dateupdated }}</td>
                         </tr>
                     {% endfor %}

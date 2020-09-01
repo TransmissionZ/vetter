@@ -15,9 +15,12 @@
                 <input type="text" id="input-small" name="vat" placeholder="VAT in %"
                        class="input-sm form-control-sm form-control">
             </div>
+            {% if messages %}
+                {% for message in messages %}
+                    <span class="badge badge-danger">{{ message }}</span>
+                {% endfor %}
+            {% endif %}
         </div>
-        <input type="hidden" name="type" value="vat">
-        <input type="hidden" name="url" value="{% url 'thenx:vatrules' %}">
         <button type="button" onclick="this.form.submit()" class="col-md-12 btn btn-outline-success btn-sm"
                 style="right: 0%">
             <i class="fa fa-magic"></i>&nbsp; Add rule

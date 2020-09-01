@@ -9,9 +9,9 @@ https://docs.djangoproject.com/en/3.0/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/3.0/ref/settings/
 """
-
+from huey import RedisHuey
+from redis import ConnectionPool
 import os
-#from celery.schedules import crontab
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -32,6 +32,7 @@ ALLOWED_HOSTS = ["transmissionz.pythonanywhere.com", '127.0.0.1']
 # Application definition
 
 INSTALLED_APPS = [
+    'huey.contrib.djhuey',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -127,16 +128,19 @@ STATIC_URL = '/static/'
 
 STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 
-CELERY_BROKER_URL = 'redis://localhost:6379'
-CELERY_RESULT_BACKEND = 'redis://localhost:6379'
-CELERY_ACCEPT_CONTENT = ['application/json']
-CELERY_RESULT_SERIALIZER = 'json'
-CELERY_TASK_SERIALIZER = 'json'
-CELERY_TIMEZONE = ''#'Asia/Makassar'
-CELERY_TASK_ALWAYS_EAGER = True
+# CELERY_BROKER_URL = 'redis://localhost:6379'
+# CELERY_RESULT_BACKEND = 'redis://localhost:6379'
+# CELERY_ACCEPT_CONTENT = ['application/json']
+# CELERY_RESULT_SERIALIZER = 'json'
+# CELERY_TASK_SERIALIZER = 'json'
+# CELERY_TIMEZONE = TIME_ZONE
+# CELERY_TASK_ALWAYS_EAGER = True
 # CELERY_BEAT_SCHEDULE = {
 #     'UpdateDB': {
 #             'task': 'thenx.tasks.UpdateDB',
 #             'schedule': crontab(minute="*/1", day_of_week="*"),
 #         },
 # }
+
+pool = ConnectionPool(host='localhost', port=6379, max_connections=20)
+HUEY = RedisHuey('thenxparser', connection_pool=pool, immediate=False)
