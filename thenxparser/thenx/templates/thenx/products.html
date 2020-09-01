@@ -94,7 +94,8 @@
                                 <p class="card-text">
                                     Brand: {{ p.brand }}
                                     <br>
-                                    Categories: {% for cat in p.category %} {{ cat }}{% if forloop.counter != p.category.len %},{% endif %} {% endfor %}
+{#                                    Categories: {% for cat in p.category %} {{ cat }}{% if forloop.counter != p.category.len %},{% endif %} {% endfor %}#}
+                                    Categories: {{ p.category }}
                                     <br>
                                     Supplier: {{ p.supplier }}
                                     <br>

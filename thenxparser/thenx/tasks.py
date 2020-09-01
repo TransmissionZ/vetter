@@ -25,7 +25,6 @@ def UpdateDB():
     r = requests.get(url, headers=headers)
     print("Data Read")
     a = json.loads(r.json())
-    print(a[0])
     # Product.objects.all().delete()
     # Code for deleting Duplicates
     rem_dup = Product.objects.values('SKU').annotate(SKU_count=Count('SKU')).filter(SKU_count__gt=1)
@@ -38,8 +37,9 @@ def UpdateDB():
     count = 0
     for product in a:
         count += 1
-        if count % 100 == 0:
+        if count % 500 == 0:
             print("Products done: " + str(count))
+            print(cat)
         p = Product.objects.filter(SKU=product["sku"]).first()
         if p:
             if p.price != product['price']:
@@ -53,12 +53,19 @@ def UpdateDB():
                 p.name = product['name']
             if p.brand != product['brand']:
                 p.brand = product['brand']
-            if p.category != json.loads(product['cat']):
-                p.category = json.loads(product['cat'])
+            cat = json.loads(product['cat'])
+            cat = ", ".join(cat)
+
+            if p.category != cat:
+                p.category = cat
             if p.supplier != product['supplier']:
                 p.supplier = product['supplier']
-            if p.base_cost != product['cost']:
-                p.base_cost = product['cost']
+
+            cost = product['cost']
+            if cost == None or str(cost) == 'nan':
+                cost = 0.0
+            if p.base_cost != cost:
+                p.base_cost = cost
             p.save()
         else:
             price = product['price']
@@ -67,10 +74,13 @@ def UpdateDB():
             cost = product['cost']
             if cost == None or str(cost) == 'nan':
                 cost = 0.0
+
+            cat = json.loads(product['cat'])
+            cat = ", ".join(cat)
             p = Product.objects.create(SKU=product['sku'], name=product['name'], price=price,
                                        brand=product['brand'],
                                        originalurl=product['url'],
-                                       category=json.loads(product['cat']), supplier=product['supplier'],
+                                       category=cat, supplier=product['supplier'],
                                        base_cost=cost)
             # p.save()
             p.price_list_set.create(finalprice=cost)

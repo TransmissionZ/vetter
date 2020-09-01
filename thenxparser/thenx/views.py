@@ -56,7 +56,10 @@ def dash_view(request):
     brands = Product.objects.order_by("brand").values_list("brand", flat=True).distinct()
     suppliers = Product.objects.order_by("supplier").values_list("supplier", flat=True).distinct()
     categories = Product.objects.order_by("category").values_list("category", flat=True).distinct()
-    categories = list(set(x for l in categories for x in l))
+    categories = ", ".join(categories)
+    categories = categories.split(', ')
+    categories = list(set(categories))
+
     delta = datetime.now() - timedelta(days=1)
     recentlychanged = Product.objects.filter(dateupdated__gte=delta).count()
     print(recentlychanged)
@@ -120,7 +123,11 @@ def products_view(request):
     plist = Product.objects.all()
     suppliers = Product.objects.order_by("supplier").values_list("supplier", flat=True).distinct()
     categories = Product.objects.order_by("category").values_list("category", flat=True).distinct()
-    categories = list(set(x for l in categories for x in l))
+    # categories = list(set(x for l in categories for x in l))
+    categories = ", ".join(categories)
+    categories = categories.split(', ')
+    categories = list(set(categories))
+
     if request.method == "POST":
         urldata = request.POST.dict()
         url = urldata.get("url")
@@ -179,7 +186,6 @@ def products_view(request):
         if 'category' in request.GET:
             catq = True
             query = request.GET.get('category')
-            print(query)
             if query != 'All' and query != None:
                 plist = Product.objects.filter(category__contains=[query])
             else:
@@ -231,7 +237,7 @@ def redirecttoproduct(request, sku):
 def rules_view(request):
     totalcomps = [_ for _ in range(
         Competitor_URL.objects.order_by('comp_name').values_list("comp_name", flat=True).distinct().count())]
-    #UpdateDB.apply_async()
+    UpdateDB()
     # testcelery.delay()
     return render(request, 'thenx/rules.html', {'totalcomps': totalcomps})
 
@@ -452,7 +458,10 @@ def getDetails(request):
     choice = request.GET.get('choice', '')
     if choice == 'cat':
         all_cats = Product.objects.order_by('category').values_list("category", flat=True).distinct()
-        result_set = list(set(x for l in all_cats for x in l))
+        all_cats = ", ".join(all_cats)
+        result_set = all_cats.split(', ')
+        result_set = list(set(result_set))
+        #result_set = list(set(x for l in all_cats for x in l))
     elif choice == 'sup':
         result_set = list(Product.objects.order_by('supplier').values_list("supplier", flat=True).distinct())
     else:

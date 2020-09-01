@@ -24,7 +24,8 @@ class Product(models.Model):
     originalurl = models.TextField()
     dateupdated = models.DateTimeField()
     important = models.BooleanField(default=False)
-    category = JSONField(default=list)
+    # category = JSONField(default=list)
+    category = models.TextField(default='')
     supplier = models.TextField(default='')
     highestcompprice = models.FloatField(default=0.0)
     lowestcompprice = models.FloatField(default=0.0)
@@ -32,7 +33,7 @@ class Product(models.Model):
 
     def update_price(self, price):
         self.price = price
-        self.dateupdated = datetime.now().strftime("%d/%m/%Y %H:%M")
+        self.dateupdated = timezone.now() # datetime.now().strftime("%d/%m/%Y %H:%M")
 
     def update_competitorprices(self):
         prices = list(self.competitor_url_set.all().values_list("comp_price", flat=True))
@@ -53,9 +54,7 @@ class Product(models.Model):
         def __unicode__(self):
             return self.name
 
-    def save(self, *args, **kwargs):
 
-        return super(Product, self).save(*args, **kwargs)
 class Price_List(models.Model):
     RON = "RON"
     P = "%"
