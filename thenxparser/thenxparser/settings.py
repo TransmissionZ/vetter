@@ -76,27 +76,27 @@ WSGI_APPLICATION = 'thenxparser.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/3.0/ref/settings/#databases
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'thenx', #os.path.join(BASE_DIR, 'thenxappMariaDB'),
-        'USER': 'thenxdefault',
-        'PASSWORD': 'ThenX.011',
-        'HOST': '',
-        'PORT': '',
-    }
-}
-
 # DATABASES = {
 #     'default': {
 #         'ENGINE': 'django.db.backends.mysql',
-#         'NAME': 'thenx_python', #os.path.join(BASE_DIR, 'thenxappMariaDB'),
-#         'USER': 'thenx_pythonapp',
-#         'PASSWORD': ')1Zuzc{{tI!V',
-#         'HOST': 'localhost',
+#         'NAME': 'thenx', #os.path.join(BASE_DIR, 'thenxappMariaDB'),
+#         'USER': 'thenxdefault',
+#         'PASSWORD': 'ThenX.011',
+#         'HOST': '',
 #         'PORT': '',
 #     }
 # }
+
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'thenx_python', #os.path.join(BASE_DIR, 'thenxappMariaDB'),
+        'USER': 'thenx_pythonapp',
+        'PASSWORD': ')1Zuzc{{tI!V',
+        'HOST': 'localhost',
+        'PORT': '',
+    }
+}
 
 # Password validation
 # https://docs.djangoproject.com/en/3.0/ref/settings/#auth-password-validators

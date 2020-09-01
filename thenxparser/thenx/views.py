@@ -95,7 +95,7 @@ def dash_view(request):
             query = request.GET.get('category')
             print(query)
             if query != 'All' and query != None:
-                plist = Product.objects.filter(category__contains=[query])
+                plist = Product.objects.filter(category__icontains=query)
             else:
                 plist = Product.objects.all()
 
@@ -187,7 +187,7 @@ def products_view(request):
             catq = True
             query = request.GET.get('category')
             if query != 'All' and query != None:
-                plist = Product.objects.filter(category__contains=[query])
+                plist = Product.objects.filter(category__icontains=query)
             else:
                 plist = Product.objects.all()
 

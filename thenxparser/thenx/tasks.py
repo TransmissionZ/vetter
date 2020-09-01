@@ -104,7 +104,7 @@ def update_warranty(warranty, appliedon, value):
         p.save()
     else:
         if appliedon == "cat":
-            plist = Product.objects.filter(category__contains=[value])
+            plist = Product.objects.filter(category__icontains=value)
         else:
             plist = Product.objects.filter(supplier__icontains=value)
 
@@ -127,7 +127,7 @@ def update_margins(whichprice, price, pricetype, appliedon, value):
         o.save()
     else:
         if appliedon == "cat":
-            plist = Product.objects.filter(category__contains=[value])
+            plist = Product.objects.filter(category__icontains=value)
         else:
             plist = Product.objects.filter(supplier__icontains=value)
 
@@ -147,7 +147,7 @@ def update_pricelist(localcosttype, localcost, type, ifsuppriceis,than, thantype
         plist = Product.objects.filter(SKU=value)
     else:
         if appliedon == "cat":
-            plist = Product.objects.filter(category__contains=[value])
+            plist = Product.objects.filter(category__icontains=value)
         else:
             plist = Product.objects.filter(supplier__icontains=value)
 
@@ -170,7 +170,7 @@ def update_competitor(priceshouldbe, than, thantype, thanHL, competitor, butnotl
         plist = Product.objects.filter(SKU=value)
     else:
         if appliedon == "cat":
-            plist = Product.objects.filter(category__contains=value)
+            plist = Product.objects.filter(category__icontains=value)
         else:
             plist = Product.objects.filter(supplier__icontains=value)
 
@@ -237,7 +237,7 @@ def set_default_competitorprice(ruleid):
         plist = Product.objects.filter(SKU=value)
     else:
         if appliedon == "cat":
-            plist = Product.objects.filter(category__contains=value)
+            plist = Product.objects.filter(category__icontains=value)
         else:
             plist = Product.objects.filter(supplier__icontains=value)
 
@@ -255,7 +255,7 @@ def set_default_pricelist(ruleid):
         plist = Product.objects.filter(SKU=value)
     else:
         if appliedon == "cat":
-            plist = Product.objects.filter(category__contains=[value])
+            plist = Product.objects.filter(category__icontains=value)
         else:
             plist = Product.objects.filter(supplier__icontains=value)
 
@@ -293,7 +293,7 @@ def set_default_margin(ruleid):
     else:
         value = o.value
         if o.appliedon == "cat":
-            plist = Product.objects.filter(category__contains=[value])
+            plist = Product.objects.filter(category__icontains=value)
         else:
             plist = Product.objects.filter(supplier=value)
         for p in plist:
@@ -317,7 +317,7 @@ def set_default_warranty(ruleid):
     else:
         value = o.value
         if o.appliedon == "cat":
-            plist = Product.objects.filter(category__contains=[value])
+            plist = Product.objects.filter(category__icontains=value)
         else:
             plist = Product.objects.filter(supplier=value)
         for p in plist:
