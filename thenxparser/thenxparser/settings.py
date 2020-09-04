@@ -87,7 +87,7 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'thenx',
-        'USER': 'thenxdb@localhost',
+        'USER': 'thenxdb',
         'PASSWORD': '4oprabusu6_',
         'HOST': 'localhost',
         'PORT': '',
