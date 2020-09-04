@@ -31,7 +31,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = os.environ["SECRET_KEY"]
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
 
 ALLOWED_HOSTS = ["p.thenxb2b.ro", "188.213.33.123", 'mharoons.com', "transmissionz.pythonanywhere.com", '127.0.0.1']
@@ -134,11 +134,3 @@ USE_TZ = True
 STATIC_URL = '/static/'
 
 STATIC_ROOT = os.path.join(BASE_DIR, 'static')
-
-# CELERY_BROKER_URL = 'redis://localhost:6379'
-# CELERY_RESULT_BACKEND = 'redis://localhost:6379'
-# CELERY_ACCEPT_CONTENT = ['application/json']
-# CELERY_RESULT_SERIALIZER = 'json'
-# CELERY_TASK_SERIALIZER = 'json'
-# CELERY_TIMEZONE = ''#'Asia/Makassar'
-# CELERY_TASK_ALWAYS_EAGER = True
