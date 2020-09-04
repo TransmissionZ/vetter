@@ -34,7 +34,7 @@ SECRET_KEY = os.environ["SECRET_KEY"]
 DEBUG = False
 
 
-ALLOWED_HOSTS = ["188.213.33.123", 'mharoons.com', "transmissionz.pythonanywhere.com", '127.0.0.1']
+ALLOWED_HOSTS = ["p.thenxb2b.ro", "188.213.33.123", 'mharoons.com', "transmissionz.pythonanywhere.com", '127.0.0.1']
 
 
 # Application definition
