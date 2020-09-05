@@ -237,7 +237,7 @@ def redirecttoproduct(request, sku):
 def rules_view(request):
     totalcomps = [_ for _ in range(
         Competitor_URL.objects.order_by('comp_name').values_list("comp_name", flat=True).distinct().count())]
-    UpdateDB()
+    # UpdateDB()
     # testcelery.delay()
     return render(request, 'thenx/rules.html', {'totalcomps': totalcomps})
 
