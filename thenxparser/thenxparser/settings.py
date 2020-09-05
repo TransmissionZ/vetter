@@ -11,18 +11,10 @@ https://docs.djangoproject.com/en/3.0/ref/settings/
 """
 
 import os, sys
-
+from huey import RedisHuey, SqliteHuey
+from redis import ConnectionPool
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-
-# add project folder to path
-# path = '/home/mharoons/thenx/repositories/vetter/thenxparser/'
-# if path not in sys.path:
-#     sys.path.insert(0, path)
-#
-# path = '/home/mharoons/thenx'
-# if path not in sys.path:
-#     sys.path.insert(0, path)
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/3.0/howto/deployment/checklist/
@@ -40,6 +32,7 @@ ALLOWED_HOSTS = ['p.thenxb2b.ro', '188.213.33.123', 'mharoons.com', 'localhost',
 # Application definition
 
 INSTALLED_APPS = [
+    'huey.contrib.djhuey',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -134,3 +127,5 @@ USE_TZ = True
 STATIC_URL = '/static/'
 
 STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+pool = ConnectionPool(host='localhost', port=6379, max_connections=20, password=os.environ["REDIS_PASS"])
+HUEY = RedisHuey('thenxparser', connection_pool=pool, immediate=False, )
