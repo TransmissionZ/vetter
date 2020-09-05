@@ -166,7 +166,6 @@ class Competitor_URL(models.Model):
 
     def save(self, *args, **kwargs):
         self.lastupdated = timezone.now()
-        self.product.update_competitorprices()
         try:
             if 'www' in self.url:
                 if 'powerlaptop.ro' in self.url:
