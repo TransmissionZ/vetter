@@ -1,7 +1,7 @@
 from bs4 import BeautifulSoup as soup
 import requests
 
-def login(user, pwd, formname, formpass, url, purl):
+def login_web(user, pwd, formname, formpass, url, purl):
     data = {formname: user, formpass: pwd, 'SubmitLogin': ''}
     try:
         with requests.Session() as s:
@@ -57,7 +57,7 @@ class sepmobile():
 
             id = 'doctor_gsm'
             pwd = 'klf118'
-            s = login(id, pwd, 'login_username', 'login_password', 'https://sepmobile.ro/login/in', self.url)
+            s = login_web(id, pwd, 'login_username', 'login_password', 'https://sepmobile.ro/login/in', self.url)
             if s:
                 p = s.find('span', class_='eroare').text
                 p = p.replace(',', '.').replace('RON', '').replace('LEI', '').strip()
@@ -80,7 +80,7 @@ class sunex():
 
             id = 'itool_service@yahoo.com'
             pwd = 'samsung22'
-            s = login(id, pwd, 'email', 'passwd', 'https://sunex.ro/nou/autentificare', self.url)
+            s = login_web(id, pwd, 'email', 'passwd', 'https://sunex.ro/nou/autentificare', self.url)
             if s:
                 p = s.find('span', itemprop='price').text.strip()
                 p = p.replace(',', '.').replace('RON', '').replace('LEI', '').strip()
@@ -103,7 +103,7 @@ class conectshop():
 
             id = 'klf118@yahoo.com'
             pwd = 'rLH-Jq5-e5G-CWF'
-            s = login(id, pwd, 'email', 'password', 'https://conectshop.ro/index.php?route=account/login', self.url)
+            s = login_web(id, pwd, 'email', 'password', 'https://conectshop.ro/index.php?route=account/login', self.url)
             if s:
                 p = s.find(itemprop='price').get('content')
                 p = p.replace(',', '.').replace('RON', '').replace('LEI', '').strip()

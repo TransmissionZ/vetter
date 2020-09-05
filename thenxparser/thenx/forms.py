@@ -1,7 +1,5 @@
 from django import forms
 from django.contrib.auth.forms import AuthenticationForm as BaseAuthenticationForm
-from django.contrib.auth.forms import PasswordResetForm as BasePasswordResetForm
-from django.contrib.auth.forms import SetPasswordForm as BaseSetPasswordForm
 from django.contrib.auth.forms import UsernameField
 from django.contrib.auth import password_validation
 from django.utils.translation import gettext, gettext_lazy as _
