@@ -106,6 +106,11 @@ class Price_List(models.Model):
         else:
             if self.wsprice != 0.0:
                 self.finalprice *= 1 + self.wsprice / 100
+        print(self.finalprice)
+        try:
+            self.finalprice = float(self.finalprice)
+        except:
+            self.finalprice = 0.0
         self.finalprice = normal_round(self.finalprice)
         if self.retailpricetype == self.RON and self.retailprice != 0.0:
             self.finalprice += self.retailprice
