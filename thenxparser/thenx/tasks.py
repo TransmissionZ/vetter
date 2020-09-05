@@ -8,6 +8,8 @@ from bs4 import BeautifulSoup as soup
 from huey import crontab
 from huey.contrib.djhuey import periodic_task, task, db_task
 import random
+import pytz
+
 
 # @periodic_task(
 #     run_every=(crontab(minute='*/1')),

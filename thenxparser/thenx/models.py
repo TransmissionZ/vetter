@@ -33,13 +33,11 @@ class Product(models.Model):
 
     def update_price(self, price):
         self.price = price
-        self.dateupdated = timezone.now() # datetime.now().strftime("%d/%m/%Y %H:%M")
+        self.dateupdated = timezone.now()
 
     def update_competitorprices(self):
         prices = list(self.competitor_url_set.all().values_list("comp_price", flat=True))
-        print(prices)
         prices = list(filter((0.0).__ne__, prices))
-        print(prices)
         self.highestcompprice = max(p for p in prices)
         self.lowestcompprice = min(p for p in prices)
         self.avgcompprice = sum(prices) / len(prices)
