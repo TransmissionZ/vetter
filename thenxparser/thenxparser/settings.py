@@ -127,5 +127,6 @@ USE_TZ = True
 STATIC_URL = '/static/'
 
 STATIC_ROOT = os.path.join(BASE_DIR, 'static')
-pool = ConnectionPool(host='localhost', port=6379, max_connections=20, password=os.environ["REDIS_PASS"])
+redis_pass = os.environ["REDIS_PASS"]
+pool = ConnectionPool(host='localhost', port=6379, max_connections=20, password=redis_pass)
 HUEY = RedisHuey('thenxparser', connection_pool=pool, immediate=False, )
