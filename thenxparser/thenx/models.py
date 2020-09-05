@@ -38,10 +38,11 @@ class Product(models.Model):
     def update_competitorprices(self):
         prices = list(self.competitor_url_set.all().values_list("comp_price", flat=True))
         prices = list(filter((0.0).__ne__, prices))
-        self.highestcompprice = max(p for p in prices)
-        self.lowestcompprice = min(p for p in prices)
-        self.avgcompprice = sum(prices) / len(prices)
-        self.save()
+        if prices:
+            self.highestcompprice = max(p for p in prices)
+            self.lowestcompprice = min(p for p in prices)
+            self.avgcompprice = sum(prices) / len(prices)
+            self.save()
 
     def __str__(self):
         return self.name
