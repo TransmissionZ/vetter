@@ -81,7 +81,7 @@ def UpdateDB():
                                        brand=product['brand'],
                                        originalurl=product['url'],
                                        category=cat, supplier=product['supplier'],
-                                       base_cost=cost)
+                                       base_cost=cost, dateupdated=timezone.now())
             # p.save()
             p.price_list_set.create(finalprice=cost)
 
