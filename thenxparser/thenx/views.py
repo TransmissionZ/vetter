@@ -99,16 +99,19 @@ def dash_view(request):
             else:
                 plist = Product.objects.all()
 
+    paginator = Paginator(plist, 100)
+    page = request.GET.get('page')
+    products = paginator.get_page(page)
     # UpdateDB()
     return render(request, 'thenx/dashboard.html', {
         'totalp': totalp,
         'totalc': totalc,
         'comp': comp,
-        'list': plist,
+        'list': products,
         'brands': brands,
         'recentlychanged': recentlychanged,
-        'suppliers':suppliers,
-        'categories':categories
+        'suppliers': suppliers,
+        'categories': categories
         })
 
 
@@ -198,8 +201,8 @@ def products_view(request):
     return render(request, 'thenx/products.html', {
         'list': products,
         'brands': brands,
-        'suppliers':suppliers,
-        'categories':categories})
+        'suppliers': suppliers,
+        'categories': categories})
 
 
 @login_required(login_url='thenx:login')
