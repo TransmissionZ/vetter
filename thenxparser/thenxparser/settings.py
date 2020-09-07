@@ -9,24 +9,24 @@ https://docs.djangoproject.com/en/3.0/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/3.0/ref/settings/
 """
+
+import os, sys
 from huey import RedisHuey, SqliteHuey
 from redis import ConnectionPool
-import os
-
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/3.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'k!nbt7iah8pw_!o06my%jqx*n*)+72jhbjt)!-onqs@xn^b@6u'
+SECRET_KEY = os.environ["SECRET_KEY"]
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ["162.0.226.237", "thenx.net", "transmissionz.pythonanywhere.com", '127.0.0.1']
+
+ALLOWED_HOSTS = ['p.thenxb2b.ro', '188.213.33.123', 'mharoons.com', 'localhost', '127.0.0.1']
 
 
 # Application definition
@@ -79,24 +79,14 @@ WSGI_APPLICATION = 'thenxparser.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'thenx', #os.path.join(BASE_DIR, 'thenxappMariaDB'),
-        'USER': 'thenxdefault',
-        'PASSWORD': 'ThenX.011',
-        'HOST': '',
+        'NAME': 'thenx',
+        'USER': 'thenxdb',
+        'PASSWORD': '4oprabusu6_',
+        'HOST': 'localhost',
         'PORT': '',
     }
 }
 
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.mysql',
-#         'NAME': 'thenx_python', #os.path.join(BASE_DIR, 'thenxappMariaDB'),
-#         'USER': 'thenx_pythonapp',
-#         'PASSWORD': ')1Zuzc{{tI!V',
-#         'HOST': 'localhost',
-#         'PORT': '',
-#     }
-# }
 
 # Password validation
 # https://docs.djangoproject.com/en/3.0/ref/settings/#auth-password-validators
@@ -122,14 +112,16 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Europe/Rome'
 
 USE_I18N = True
 
 USE_L10N = True
 
-USE_TZ = True
+USE_TZ = False
 
+SESSION_COOKIE_AGE = 86400
+SESSION_EXPIRE_AT_BROWSER_CLOSE = True
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.0/howto/static-files/
@@ -137,21 +129,6 @@ USE_TZ = True
 STATIC_URL = '/static/'
 
 STATIC_ROOT = os.path.join(BASE_DIR, 'static')
-
-# CELERY_BROKER_URL = 'redis://localhost:6379'
-# CELERY_RESULT_BACKEND = 'redis://localhost:6379'
-# CELERY_ACCEPT_CONTENT = ['application/json']
-# CELERY_RESULT_SERIALIZER = 'json'
-# CELERY_TASK_SERIALIZER = 'json'
-# CELERY_TIMEZONE = TIME_ZONE
-# CELERY_TASK_ALWAYS_EAGER = True
-# CELERY_BEAT_SCHEDULE = {
-#     'UpdateDB': {
-#             'task': 'thenx.tasks.UpdateDB',
-#             'schedule': crontab(minute="*/1", day_of_week="*"),
-#         },
-# }
-
-pool = ConnectionPool(host='localhost', port=6379, max_connections=20)
-HUEY = RedisHuey('thenxparser', connection_pool=pool, immediate=False)
-# HUEY = SqliteHuey()
+redis_pass = os.environ["REDIS_PASS"]
+pool = ConnectionPool(host='localhost', port=6379, max_connections=20, password=redis_pass)
+HUEY = RedisHuey('thenxparser', connection_pool=pool, immediate=False, )
