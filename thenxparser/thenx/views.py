@@ -51,18 +51,70 @@ def logout_view(request):
 def dash_view(request):
     totalp = Product.objects.count()
     totalc = Competitor_URL.objects.count()
-    comp = Competitor_URL.objects.order_by('comp_name').values_list("comp_name", flat=True).distinct().count()
+    comp = Competitor_URL.objects.order_by('comp_name').values_list("comp_name", flat=True).distinct()
 
     brands = Product.objects.order_by("brand").values_list("brand", flat=True).distinct()
+    tbrands = len(brands)
     suppliers = Product.objects.order_by("supplier").values_list("supplier", flat=True).distinct()
     categories = Product.objects.order_by("category").values_list("category", flat=True).distinct()
     categories = ", ".join(categories)
     categories = categories.split(', ')
     categories = list(set(categories))
-
+    tcats = len(categories)
     delta = datetime.now() - timedelta(days=1)
-    recentlychanged = Product.objects.filter(dateupdated__gte=delta).count()
-    print(recentlychanged)
+    recentlychanged = Product.objects.filter(dateupdated__gte=delta)
+    increased = 0
+    decreased = 0
+    for o in recentlychanged:
+        if o.price_list_set.first().finalprice > o.oldprice:
+            increased += 1
+        else:
+            decreased += 1
+
+    recentlychanged = recentlychanged.count()
+    imcheapest = 0
+    imcheaper = 0
+    imaverage = 0
+    imhigher = 0
+    imhighest = 0
+    imequal = 0
+    for p in Product.objects.all():
+        comp_prices = list(p.competitor_url_set.order_by('comp_price').values_list('comp_price', flat=True))
+        if len(comp_prices) == 0:
+            imequal += 1
+            continue
+        price = round(p.price_list_set.first().finalprice, 1)
+        comp_prices.append(price)
+        comp_prices.sort()
+        idx = comp_prices.index(price)
+        if len(set(comp_prices)) <= 1:
+            imequal += 1
+            continue
+
+        if idx == 0:
+            imcheapest += 1
+        elif 0 < idx < len(comp_prices)//2:
+            imcheaper += 1
+        elif idx == len(comp_prices)//2:
+            imaverage += 1
+        elif len(comp_prices)//2 < idx < len(comp_prices) - 1:
+            imhigher += 1
+        else:
+            imhighest += 1
+
+    pindex = 96.91
+    complist = [[] for _ in range(len(comp))]
+
+    for idx, c in enumerate(complist):
+        comp_name = list(comp)[idx]
+        complist[idx].append(comp_name)
+        complist[idx].append(Competitor_URL.objects.filter(comp_name__contains=comp_name).count())
+        complist[idx].append(40)
+        complist[idx].append(0)
+
+    complist.insert(0, ["thenx", Product.objects.count(), 96.5, 0])
+
+    comp = comp.count()
     if request.method == 'GET':
         brandq = False
         supq = False
@@ -111,7 +163,19 @@ def dash_view(request):
         'brands': brands,
         'recentlychanged': recentlychanged,
         'suppliers': suppliers,
-        'categories': categories
+        'categories': categories,
+        'tcats': tcats,
+        'tbrands': tbrands,
+        'increased': increased,
+        'decreased': decreased,
+        'imcheapest': imcheapest,
+        'imcheaper': imcheaper,
+        'imaverage': imaverage,
+        'imhigher': imhigher,
+        'imhighest': imhighest,
+        'imequal': imequal,
+        'pindex': pindex,
+        'complist': complist,
         })
 
 

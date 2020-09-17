@@ -27,10 +27,14 @@
             <div class="row">
                 <div class="col-md-6 col-lg-3">
                     <div class="statistic__item statistic__item--green">
-                        <h2 class="number">{{ totalc }}</h2>
-                        <span class="desc">Total competitor urls added</span>
+                        <h2 class="number">{{ comp }}</h2>
+                        <span class="desc">Total Competitors</span>
+                        {#                        <h2 class="number"></h2>#}
+                        <hr>
+                        <h4><span class="desc">Total competitor urls: {{ totalc }}</span></h4>
+                        <h4>&nbsp;</h4>
                         <div class="icon">
-                            <i class="zmdi zmdi-account-o"></i>
+                            <i class="zmdi zmdi-cloud-circle"></i>
                         </div>
                     </div>
                 </div>
@@ -38,6 +42,10 @@
                     <div class="statistic__item statistic__item--orange">
                         <h2 class="number">{{ totalp }}</h2>
                         <span class="desc">total products</span>
+                        <hr>
+                        <h4><span class="desc">Brands: {{ tbrands }}</span></h4>
+                        <h4><span class="desc">Categories: {{ tcats }}</span></h4>
+
                         <div class="icon">
                             <i class="zmdi zmdi-shopping-cart"></i>
                         </div>
@@ -45,8 +53,11 @@
                 </div>
                 <div class="col-md-6 col-lg-3">
                     <div class="statistic__item statistic__item--blue">
-                        <h2 class="number">{{ comp }}</h2>
-                        <span class="desc">Total Competitors</span>
+                        <h2 class="number">{{ pindex }}</h2>
+                        <span class="desc">Index</span>
+                        <hr>
+                        <h4>&nbsp;</h4>
+                        <h4>&nbsp;</h4>
                         <div class="icon">
                             <i class="zmdi zmdi-calendar-note"></i>
                         </div>
@@ -56,6 +67,9 @@
                     <div class="statistic__item statistic__item--red">
                         <h2 class="number">{{ recentlychanged }}</h2>
                         <span class="desc">prices changed recently</span>
+                        <hr>
+                        <h5><span class="desc text-sm-left">Increased {{ increased }}</span></h5>
+                        <h5><span class="desc text-sm-left">Decreased {{ decreased }}</span></h5>
                         <div class="icon">
                             <i class="zmdi zmdi-money"></i>
                         </div>
@@ -64,7 +78,54 @@
             </div>
         </div>
     </section>
-    <!-- END STATISTIC-->
+    <div class="row m-t-30">
+        <div class="col-lg-5">
+            <div class="au-card m-b-30">
+                <div class="au-card-inner">
+                    <h3 class="title-2 m-b-40">Position</h3>
+                    <canvas id="pieChart"></canvas>
+                </div>
+            </div>
+        </div>
+        <!-- END STATISTIC-->
+        <!-- Competitor Table -->
+        <div class="col-lg-7">
+            <div class="col-md-12">
+                <!-- DATA TABLE-->
+                <div class="table-responsive m-b-40">
+                    <table class="table table-borderless table-data3">
+                        <thead>
+                        <tr>
+                            <th>Company</th>
+                            <th>Products</th>
+                            <th>Match Rate</th>
+                            <th>Index</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% for c in complist %}
+                            <tr>
+                                <td>{{ c.0 }}</td>
+                                <td>{{ c.1 }}</td>
+                                <td>
+                                    <div class="progress mb-2" style="height: 20px;">
+                                        <div class="progress-bar bg-success progress-bar-striped progress-bar-animated"
+                                             role="progressbar" style="width: {{ c.2 }}%;" aria-valuenow="{{ c.2 }}"
+                                             aria-valuemin="0" aria-valuemax="100"></div>
+                                    </div>
+                                </td>
+                                <td>{{ c.3 }}</td>
+
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                <!-- END DATA TABLE-->
+            </div>
+        </div>
+    </div>
+    <!-- END Competitor Table -->
     <div class="row m-t-30">
         <div class="col-md-12">
             <div class="table-data__tool-left" style="padding-left: 2%">
@@ -203,4 +264,63 @@
         {#    </span>#}
     </div>
 
+    <script>
+        $(function () {
+            try {
+
+                //pie chart
+                var ctx = document.getElementById("pieChart");
+                if (ctx) {
+                    ctx.height = 200;
+                    var myChart = new Chart(ctx, {
+                        type: 'pie',
+                        data: {
+                            datasets: [{
+                                data: [{{ imcheapest }}, {{ imcheaper }}, {{ imaverage }}, {{ imhigher }}, {{ imhighest}}, {{ imequal }}],
+                                backgroundColor: [
+                                    "rgba(62, 51, 204, 1)",
+                                    "rgba(255, 125, 0, 0.8)",
+                                    "rgba(255, 228, 0, 1)",
+                                    "rgba(0, 255, 176, 1)",
+                                    "rgba(47, 0, 147, 1)",
+                                    "rgba(135, 255, 16, 1)",
+                                ],
+                                hoverBackgroundColor: [
+                                    "rgba(0, 123, 255,0.9)",
+                                    "rgba(0, 123, 255,0.7)",
+                                    "rgba(0, 123, 255,0.5)",
+                                    "rgba(0,0,0,0.07)",
+                                    "rgba(135, 255, 16, 1)",
+                                    "rgba(0, 255, 176, 1)",
+                                ]
+
+                            }],
+                            labels: [
+                                "I'm Cheapest",
+                                "I'm Cheaper",
+                                "Average",
+                                "I'm Higher",
+                                "I'm Highest",
+                                "All Equal",
+                            ]
+                        },
+                        options: {
+                            legend: {
+                                position: 'top',
+                                labels: {
+                                    fontFamily: 'Poppins'
+                                }
+
+                            },
+                            responsive: true
+                        }
+                    });
+                }
+
+
+            } catch (error) {
+                console.log(error);
+            }
+        })
+    </script>
 {% endblock dashcontent %}

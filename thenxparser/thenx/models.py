@@ -24,7 +24,7 @@ class Product(models.Model):
     originalurl = models.TextField()
     dateupdated = models.DateTimeField()
     important = models.BooleanField(default=False)
-    # category = JSONField(default=list)
+    oldprice = models.FloatField(default=0.0)
     category = models.TextField(default='')
     supplier = models.TextField(default='')
     highestcompprice = models.FloatField(default=0.0)
@@ -85,6 +85,7 @@ class Price_List(models.Model):
         return str(self.finalprice)
 
     def save(self, *args, **kwargs):
+        self.product.oldprice = self.finalprice
         self.finalprice = self.product.base_cost
         try:
             self.finalprice = float(self.finalprice)

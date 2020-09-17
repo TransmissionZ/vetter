@@ -17,51 +17,53 @@
             {#    Search !!! #}
             <div class="row m-t-30">
                 <div class="col-md-12">
-                    <div class="table-data__tool-left">
-                        <div class="rs-select2--light rs-select2--md">
-                            <form value="{{ request.GET.brand }}" method="GET" id="brandform">
-                                <select class="js-select2 form-control" name="brand" id="selectbrand"
-                                        onchange="this.form.submit()">
-                                    <option value="All" ; {% if request.GET.brand == None %}selected{% endif %}>All
-                                        Brands
-                                    </option>
-                                    {% for o in brands %}
-                                        <option value="{{ o }}"
-                                                {% if request.GET.brand == o %}selected{% endif %}>{{ o }}</option>
-                                    {% endfor %}
-                                </select>
-                                <div class="dropDownSelect2"></div>
-                            </form>
-                        </div>
-                        <div class="rs-select2--light rs-select2--md">
-                            <form value="{{ request.GET.supplier }}" method="GET" id="brandform">
-                                <select class="js-select2 form-control" name="supplier" id="selectbrand"
-                                        onchange="this.form.submit()">
-                                    <option value="All" ; {% if request.GET.supplier == None %}selected{% endif %}>All
-                                        Suppliers
-                                    </option>
-                                    {% for o in suppliers %}
-                                        <option value="{{ o }}"
-                                                {% if request.GET.supplier == o %}selected{% endif %}>{{ o }}</option>
-                                    {% endfor %}
-                                </select>
-                                <div class="dropDownSelect2"></div>
-                            </form>
-                        </div>
-                        <div class="rs-select2--light rs-select2--md">
-                            <form value="{{ request.GET.category }}" method="GET" id="brandform">
-                                <select class="js-select2 form-control" name="category" id="selectbrand"
-                                        onchange="this.form.submit()">
-                                    <option value="All" ; {% if request.GET.category == None %}selected{% endif %}>All
-                                        Categories
-                                    </option>
-                                    {% for o in categories %}
-                                        <option value="{{ o }}"
-                                                {% if request.GET.category == o %}selected{% endif %}>{{ o }}</option>
-                                    {% endfor %}
-                                </select>
-                                <div class="dropDownSelect2"></div>
-                            </form>
+                    <div class="au-breadcrumb-content">
+                        <div class="table-data__tool-left">
+                            <div class="rs-select2--light rs-select2--md">
+                                <form value="{{ request.GET.brand }}" method="GET" id="brandform">
+                                    <select class="js-select2 form-control" name="brand" id="selectbrand"
+                                            onchange="this.form.submit()">
+                                        <option value="All" {% if request.GET.brand == None %}selected{% endif %}>All
+                                            Brands
+                                        </option>
+                                        {% for o in brands %}
+                                            <option value="{{ o }}"
+                                                    {% if request.GET.brand == o %}selected{% endif %}>{{ o }}</option>
+                                        {% endfor %}
+                                    </select>
+                                    <div class="dropDownSelect2"></div>
+                                </form>
+                            </div>
+                            <div class="rs-select2--light rs-select2--md">
+                                <form value="{{ request.GET.supplier }}" method="GET" id="brandform">
+                                    <select class="js-select2 form-control" name="supplier" id="selectbrand"
+                                            onchange="this.form.submit()">
+                                        <option value="All" {% if request.GET.supplier == None %}selected{% endif %}>All
+                                            Suppliers
+                                        </option>
+                                        {% for o in suppliers %}
+                                            <option value="{{ o }}"
+                                                    {% if request.GET.supplier == o %}selected{% endif %}>{{ o }}</option>
+                                        {% endfor %}
+                                    </select>
+                                    <div class="dropDownSelect2"></div>
+                                </form>
+                            </div>
+                            <div class="rs-select2--light rs-select2--md">
+                                <form value="{{ request.GET.category }}" method="GET" id="brandform">
+                                    <select class="js-select2 form-control" name="category" id="selectbrand"
+                                            onchange="this.form.submit()">
+                                        <option value="All" {% if request.GET.category == None %}selected{% endif %}>All
+                                            Categories
+                                        </option>
+                                        {% for o in categories %}
+                                            <option value="{{ o }}"
+                                                    {% if request.GET.category == o %}selected{% endif %}>{{ o }}</option>
+                                        {% endfor %}
+                                    </select>
+                                    <div class="dropDownSelect2"></div>
+                                </form>
+                            </div>
                         </div>
                     </div>
                     <div class="table-data__tool-right">
@@ -241,8 +243,6 @@
             {% endfor %}
         </div>
     </div>
-    </div>
-    </section>
     <!-- END DATA TABLE-->
     <div class="container col-md-12">
         {#        <div class="row justify-content-center">#}
@@ -276,6 +276,7 @@
                 </ul>
 
         </nav>
+        <br>
         {#    </span>#}
     </div>
 
