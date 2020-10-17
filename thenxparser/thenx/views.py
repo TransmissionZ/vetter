@@ -1,22 +1,19 @@
 from django.contrib.auth.models import User
 from django.shortcuts import render, redirect
-from django.contrib.auth.forms import AuthenticationForm as BaseAuthenticationForm
 from django.contrib.auth import login, logout
 from django.contrib.auth.decorators import login_required
-# Create your views here.
-from django.http import HttpResponse
-from .forms import AuthenticationForm
-from datetime import datetime
+from django.http import HttpResponse, JsonResponse
+from .forms import *
 from django.core.paginator import Paginator
 from .models import *
 from .tasks import *
-from django.db.models import Q, Count
+from django.db.models import Q
 from django.http import HttpResponseRedirect
 from django.urls import reverse
 from django.contrib import messages
 from datetime import timedelta
 import json
-
+from django.core.files.storage import FileSystemStorage
 
 # For login required @login_required(login_url='thenx:login')
 def index(request):
@@ -182,7 +179,17 @@ def dash_view(request):
 def get_count_users():
     return User.objects.count()
 
+def competitors_upload(request):
+    if request.method == "POST":
+        compurls = request.FILES["compurls"]
+        p = UploadCompetitors.objects.create(upload_file=compurls)
+        # print(p)
+        upload_comps()
+        print(compurls)
 
+        return JsonResponse({"result": "True"})
+    else:
+        return JsonResponse({"result": "False"})
 @login_required(login_url='thenx:login')
 def products_view(request):
     # UpdateDB()
@@ -211,19 +218,21 @@ def products_view(request):
         if 'q' in request.GET:
             query = request.GET.get('q')
             queryflag1 = True
-        else:
-            query = ''
+            return HttpResponseRedirect('.' + '?q=' + str(query))
 
         if 'brand' in request.GET:
             bquery = request.GET.get('brand')
             queryflag2 = True
-        else:
-            bquery = 'All'
+            return HttpResponseRedirect('.' + '?brand=' + str(bquery))
 
-        if queryflag1 or queryflag2:
-            return HttpResponseRedirect('./' + '?brand=' + str(bquery) + '&' + 'q=' + str(query))
-        else:
-            return redirect('thenx:products')
+        # if queryflag1 or queryflag2:
+        #     return HttpResponseRedirect('.' + '?brand=' + str(bquery) + '&' + 'q=' + str(query))
+        # elif queryflag1:
+        #     return HttpResponseRedirect('.' + '?q=' + str(query))
+        # elif queryflag2:
+        #     return HttpResponseRedirect('./' + '?brand=' + str(bquery))
+        # else:
+        return redirect('thenx:products')
 
     if request.method == "GET":
         if 'q' in request.GET:
@@ -266,18 +275,20 @@ def products_view(request):
         'list': products,
         'brands': brands,
         'suppliers': suppliers,
-        'categories': categories})
+        'categories': categories,
+        'uploadform': upload_comps,
+    })
 
 
 @login_required(login_url='thenx:login')
-def deleteurl(request, urlid=None):
+def deleteurl(request, urlid=None, pid=None):
     o = Competitor_URL.objects.filter(pk=urlid).first()
     p = o.product
     o.delete()
     p.update_competitorprices()
     dict = request.POST.dict()
-    if 'brand' in request.POST and 'q' in request.POST:
-        return HttpResponseRedirect(reverse('thenx:products') + "?brand=" + dict.get('brand') + "&q=" + dict.get('q'))
+    if 'q' in request.POST:
+        return HttpResponseRedirect(reverse('thenx:products') + "?q=" + dict['q'])
     return redirect('thenx:products')
 
 
@@ -297,7 +308,8 @@ def set_imp(request):
 
 
 def redirecttoproduct(request, sku):
-    return HttpResponseRedirect('./' + '?brand=All' + '&' + 'q=' + sku)
+    return HttpResponseRedirect(reverse('thenx:products')+"?q="+sku)
+    # return HttpResponseRedirect('.' + '?brand=All' + '&' + 'q=' + sku)
 
 
 @login_required(login_url='thenx:login')
@@ -414,8 +426,9 @@ def rules_price_list(request):
             ob = pricelistrules.objects.create(localcosttype=localcosttype, localcost=localcost, type=type,
                                                ifsuppriceis=ifsuppriceis,
                                                than=than, thantype=thantype, appliedon=appliedon, value=value,)
+            # ob.save()
         update_pricelist(localcosttype, localcost, type, ifsuppriceis, than, thantype, appliedon, value)
-    # suppliers = list(Product.objects.order_by('supplier').values_list("supplier", flat=True).distinct())
+
     rules = pricelistrules.objects.all()
     return render(request, 'thenx/rules_pricelist.html', {"rules": rules})
 

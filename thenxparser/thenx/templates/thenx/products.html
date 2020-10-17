@@ -6,7 +6,26 @@
 {% block nav %}Products {% endblock nav %}
 
 {% block dashcontent %}
-    <div class="p-t-20">
+    <style>
+        .fileUpload {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .fileUpload input.upload {
+            position: absolute;
+            top: 0;
+            right: 0;
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            font-size: 20px;
+            cursor: pointer;
+            opacity: 0;
+            filter: alpha(opacity=0);
+        }
+    </style>
+    <div class="m-t-30">
         <div class="container">
             <div class="row">
                 <div class="col-md-12">
@@ -64,18 +83,23 @@
                                     <div class="dropDownSelect2"></div>
                                 </form>
                             </div>
+                            &nbsp;
+                            <div class="rs-select2--light rs-select2--md" style="width: 300px">
+                                <button class="au-btn au-btn-icon au-btn--green au-btn--small" data-toggle="modal"
+                                        data-target="#mediumModal">
+                                    <i class="zmdi zmdi-plus "></i>Import Competitors
+                                </button>
+                            </div>
+                            <div class="rs-select2--dark rs-select2--dark2" style="position: absolute; right: 2.2%">
+                                <form class="row form-header" value="{{ request.GET.q }}" method="GET">
+                                    <input class="au-input" type="text" name="q" value="{{ request.GET.q }}"
+                                           placeholder="Search for Products..."/>
+                                    <button class="au-btn--submit" type="submit">
+                                        <i class="zmdi zmdi-search"></i>
+                                    </button>
+                                </form>
+                            </div>
                         </div>
-                    </div>
-                    <div class="table-data__tool-right">
-                        <form class="row form-header" value="{{ request.GET.q }}" method="GET"
-                              style="position:absolute; padding-right: 2%; right: 1%;">
-                            {#                    {% csrf_token %}#}
-                            <input class="au-input au-input--xl" type="text" name="q" value="{{ request.GET.q }}"
-                                   placeholder="Search for Products..."/>
-                            <button class="au-btn--submit" type="submit">
-                                <i class="zmdi zmdi-search"></i>
-                            </button>
-                        </form>
                     </div>
                 </div>
             </div>
@@ -83,65 +107,130 @@
             <!-- DATA TABLE-->
             <br><br>
             {% for p in list %}
-                <div class="row" style="padding-left: 1.1%">
-                    <div class="card col-md-7">
-                        <div class="card-header">
-                            <strong class="card-title">{{ p.name }}
-                                <small>
-                                    <span class="badge badge-success float-right mt-1">Price Changed</span>
-                                </small>
-                            </strong>
-                        </div>
-                        <div class="card-body">
-                            <p class="card-text">
-                                Brand: {{ p.brand }}
+                <div class="row">
+                    <div class="col-md-7">
+                        <div class="card">
+                            <div class="card-header">
+                                <strong class="card-title">{{ p.name }}
+                                    <small>
+                                        <span class="badge badge-success float-right mt-1">Price Changed</span>
+                                    </small>
+                                </strong>
+                            </div>
+                            <div class="card-body">
+                                <p class="card-text">
+                                    Brand: {{ p.brand }}
+                                    <br>
+                                    {#                                    Categories: {% for cat in p.category %} {{ cat }}{% if forloop.counter != p.category.len %},{% endif %} {% endfor %}#}
+                                    Categories: {{ p.category }}
+                                    <br>
+                                    Supplier: {{ p.supplier }}
+                                    <br>
+                                    Last Updated: {{ p.dateupdated }}
+                                    <br>
+                                    SKU: {{ p.SKU }}
+                                    <br>
+                                    <br>
+                                    Highest Competitor Price: {{ p.highestcompprice }}<br>
+                                    Lowest Competitor Price: {{ p.lowestcompprice }}<br>
+                                    Average Competitor Price: {{ p.avgcompprice|floatformat:2 }}<br><br>
+                                <form action="{% url 'thenx:setimp' %}" method="get">
+                                    <label class="switch switch-3d switch-primary mr-3">
+                                        <input type="checkbox" class="switch-input"
+                                               {% if p.important == 1 %}checked{% endif %}>
+                                        <input type="hidden" name="pk" value="{{ p.SKU }}">
+                                        <span class="switch-label"></span>
+                                        <span class="switch-handle"></span>
+                                    </label>
+                                    IMPORTANCE
+                                </form>
                                 <br>
-                                {#                                    Categories: {% for cat in p.category %} {{ cat }}{% if forloop.counter != p.category.len %},{% endif %} {% endfor %}#}
-                                Categories: {{ p.category }}
-                                <br>
-                                Supplier: {{ p.supplier }}
-                                <br>
-                                Last Updated: {{ p.dateupdated }}
-                                <br>
-                                SKU: {{ p.SKU }}
-                                <br>
-                                <br>
-                                Highest Competitor Price: {{ p.highestcompprice }}<br>
-                                Lowest Competitor Price: {{ p.lowestcompprice }}<br>
-                                Average Competitor Price: {{ p.avgcompprice }}<br><br>
-                            <form action="{% url 'thenx:setimp' %}" method="get">
-                                <label class="switch switch-3d switch-primary mr-3">
-                                    <input type="checkbox" class="switch-input"
-                                           {% if p.important == 1 %}checked{% endif %}>
-                                    <input type="hidden" name="pk" value="{{ p.SKU }}">
-                                    <span class="switch-label"></span>
-                                    <span class="switch-handle"></span>
-                                </label>
-                                IMPORTANCE
-                            </form>
-                            <br>
-                            <br>
-                            {% if p.price != p.price_list_set.first.finalprice %}
-                                <h6>
-                                    <del>Old Price: {{ p.price }} RON</del>
-                                </h6>
-                                <h5>New Price: {{ p.price_list_set.first.finalprice }} RON</h5>
-                            {% else %}
-                                <h5>Price: {{ p.price }} RON</h5>
-                            {% endif %}
-                            {% if p.price_list_set.competitorprice != 0.0 %}
-                                <br>
-                                <h5>SmartPrice: {{ p.price_list_set.first.competitorprice }} RON</h5>
+                                {% if p.price != p.price_list_set.first.finalprice %}
+                                    <h6>
+                                        <del>Old Price: {{ p.price }} RON</del>
+                                    </h6>
+                                    <h5>New Price: {{ p.price_list_set.first.finalprice }} RON</h5>
+                                {% else %}
+                                    <h5>Price: {{ p.price }} RON</h5>
+                                {% endif %}
+                                {% if p.price_list_set.competitorprice != 0.0 %}
+                                    <br>
+                                    <h5>SmartPrice: {{ p.price_list_set.first.competitorprice }} RON</h5>
 
-                            {% endif %}
+                                {% endif %}
                             </p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-5">
+                        <div class="card">
+                            <div class="card-header">
+                                <strong class="card-title">Product Price List
+                                </strong>
+                            </div>
+                            <div class="card-body">
+                                <p class="card-text">
+                                    Base Cost: {{ p.base_cost }}<br>
+                                    Local Cost Supplier: {% if p.price_list_set.first.localcostsupplier != 0.0 %}
+                                    {{ p.price_list_set.first.localcostsupplier }}
+                                    {{ p.price_list_set.first.localcostsuppliertype }}
+                                {% else %}N/A{% endif %}
+                                    <br>
+                                    Local Cost ThenX: {% if p.price_list_set.first.localcostthenx != 0.0 %}
+                                    {{ p.price_list_set.first.localcostthenx }}
+                                    {{ p.price_list_set.first.localcostthenxtype }}
+                                {% else %}N/A{% endif %}
+                                    <br>
+                                    VAT: {% if p.price_list_set.first.vat != 0.0 %}
+                                    {{ p.price_list_set.first.vat }} %
+                                {% else %}N/A{% endif %}
+                                    <br>
+                                    All Product Cost: {% if p.price_list_set.first.allproductcost != 0.0 %}
+                                    {{ p.price_list_set.first.allproductcost }}
+                                {% else %}N/A{% endif %}
+                                    <br>
+                                    Wholesale Price: {% if p.price_list_set.first.wsprice != 0.0 %}
+                                    {{ p.price_list_set.first.wsprice }} {{ p.price_list_set.first.wspricetype }}
+                                {% else %}N/A{% endif %}
+                                    <br>
+                                    {#                                Shop Price Margin: {% if p.price_list_set.first.margin_shop != 0.0 %}#}
+                                    {#                                    {{ p.price_list_set.first.margin_shop }}#}
+                                    {#                                    {% else %}N/A{% endif %}#}
+                                    {#                                <br>#}
+                                    Retail Price: {% if p.price_list_set.first.retailprice != 0.0 %}
+                                    {{ p.price_list_set.first.retailprice }}
+                                    {{ p.price_list_set.first.retailpricetype }}
+                                {% else %}N/A{% endif %}
 
+                                    <br>
+                                    Gross Profit Wholesale: {% if p.price_list_set.first.gpws != 0.0 %}
+                                    {{ p.price_list_set.first.gpws }}
+                                {% else %}N/A{% endif %}
+                                    <br>
+                                    Margin Wholesale: {% if p.price_list_set.first.margin_ws != 0.0 %}
+                                    {{ p.price_list_set.first.margin_ws }} %
+                                {% else %}N/A{% endif %}
+                                    <br>
+                                    Gross Profit Shop: {% if p.price_list_set.first.gp_shop != 0.0 %}
+                                    {{ p.price_list_set.first.gp_shop }}
+                                {% else %}N/A{% endif %}
+                                    <br>
+                                    Shop Margin: {% if p.price_list_set.first.margin_shop != 0.0 %}
+                                    {{ p.price_list_set.first.margin_shop }}
+                                {% else %}N/A{% endif %}
+                                    <br>
+                                    <br>
+                                    Shop Price: {% if p.price_list_set.first.finalprice != 0.0 %}
+                                    {{ p.price_list_set.first.finalprice }}
+                                {% else %}N/A{% endif %}
+                                </p>
+                            </div>
                         </div>
                     </div>
                 </div>
-                <div class="row" style="">
+                <div class="row">
                     <div class="col-md-12">
-                        <h3 class="title-5 m-b-35">competitors</h3>
+                        <h3 class="title-5 m-b-20">competitors</h3>
                         <div class="table-data__tool">
                             <div class="table-data__tool-right">
                                 <button data-toggle="collapse" data-target="#addurl{{ forloop.counter }}"
@@ -209,10 +298,11 @@
                                             <td>
                                                 <span class="status--process">{{ comp.lastupdated }}</span>
                                             </td>
-                                            <td>{{ comp.comp_price }}</td>
+                                            <td>{% if comp.comp_price == 0.0 %}N/A{% else %}
+                                                {{ comp.comp_price }}{% endif %}</td>
                                             <td>
                                                 <div class="table-data-feature">
-                                                    <form action="{% url 'thenx:deleteurl' urlid=comp.pk %}"
+                                                    <form action="{% url 'thenx:deleteurl' urlid=comp.pk pid=p.SKU %}"
                                                           method="post">
                                                         {% csrf_token %}
                                                         <button class="item" data-toggle="tooltip"
@@ -220,7 +310,7 @@
                                                                 title="Delete">
                                                             <i class="zmdi zmdi-delete"></i>
                                                         </button>
-                                                        {% if request.GET.brand and request.GET.q %}
+                                                        {% if request.GET.brand or request.GET.q %}
                                                             <input type="hidden" name="brand"
                                                                    value="{{ request.GET.brand }}">
                                                             <input type="hidden" name="q"
@@ -236,23 +326,26 @@
                                 </table>
                             {% endif %}
                         </div>
-                        <hr>
+                        <hr class="line-seprate">
+                        <br>
                     </div>
                 </div>
 
             {% endfor %}
         </div>
     </div>
+
     <!-- END DATA TABLE-->
     <div class="container col-md-12">
-        {#        <div class="row justify-content-center">#}
-        {#    <span class="step-links">#}
-        <nav aria-label="Page navigation example" class="navbar navbar-expand-lg navbar-dark bg-transparent rounded">
+        <nav aria-label="Page navigation example"
+             class="navbar navbar-expand-lg navbar-dark bg-transparent rounded">
             <ul class="navbar-nav mr-auto">
                 <li class="page-item"><a class="btn btn-dark" href="?page=1">&laquo; first</a></li>
                 {% if list.has_previous %}
-                    <li class="page-item {% if not list.has_previous %} disabled {% endif %}" style="padding-left: 10%">
-                        <a class="btn btn-dark" href="?page={{ list.previous_page_number }}" tabindex="-1">previous</a>
+                    <li class="page-item {% if not list.has_previous %} disabled {% endif %}"
+                        style="padding-left: 10%">
+                        <a class="btn btn-dark" href="?page={{ list.previous_page_number }}"
+                           tabindex="-1">previous</a>
                     </li>
                 {% endif %}
             </ul>
@@ -265,7 +358,8 @@
             {#        </span>#}
             <ul class="navbar-nav ml-auto">
                 {% if list.has_next %}
-                    <li class="page-item {% if not list.has_next %} disabled {% endif %}" style="padding-right: 10%">
+                    <li class="page-item {% if not list.has_next %} disabled {% endif %}"
+                        style="padding-right: 10%">
                         <a class="btn btn-dark" href="?page={{ list.next_page_number }}">next</a>
                     </li>
                 {% endif %}
@@ -279,7 +373,50 @@
         <br>
         {#    </span>#}
     </div>
+    </div>
+    <!-- modal medium -->
+    <div class="modal fade" id="mediumModal" tabindex="-1" role="dialog" aria-labelledby="mediumModalLabel"
+         aria-hidden="true">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <form action="{% url 'thenx:uploadcomp' %}" method="post" enctype="multipart/form-data" id="upload"
+                      data-action="{% csrf_token %}">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="mediumModalLabel">Import Competitors</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <p>
+                            {% csrf_token %}
+                        <div class="fileUpload btn btn-outline-primary btn-lg btn-block">
+                            <span>Select Competitors Sheet</span>
+                            <input type="file" class="upload" name="compurls" onchange="compload(this)"
+                                   accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"/>
+                        </div>
+                        {#                                {{ uploadform.as_p }}#}
+                        {#                            <button type="button" class="btn btn-outline-primary btn-lg btn-block">Select Competitors Sheet</button>#}
+                        <br>
+                        <h5 style="padding-bottom: 3px; display: none" id="filesel">File Selected: </h5>
+                        <h5 style="padding-bottom: 3px; display: none" id="uploaded">Please wait while the file is being
+                            uploaded and checked...</h5>
+                        <h5 style="padding-bottom: 3px; display: none" id="uploaderror">There was a problem upload file,
+                            please check file is correct.</h5>
+                        <h5 style="padding-bottom: 3px; display: none" id="uploadsuccess">Successfully uploaded, urls
+                            will be added shortly!</h5>
 
+                        </p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                        <button type="submit" class="btn btn-primary">Confirm</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <!-- end modal medium -->
     <script>
         function checkURL(abc) {
             var string = abc.value;
@@ -291,22 +428,51 @@
         }
     </script>
     <script type="application/javascript">
+        {#$(".rs-select2--dark .rs-select2--dark2").css({'position':'absolute', 'right':'2.2%'})#}
         $(".switch-input").change(function () {
-            var chk = 0;
+            var chk;
             if ($(this).is(":checked")) {
-                chk = 1
+                chk = 1;
             } else {
-                chk = 0
+                chk = 0;
             }
             var form = $(this).closest("form");
-            var formdata = form.serializeArray()
-            formdata.push({name: 'chk', value: chk})
+            var formdata = form.serializeArray();
+            formdata.push({name: 'chk', value: chk});
             $.ajax({
                 url: form.attr("action"),
                 data: formdata,
                 dataType: 'html',
             });
         });
+
+        function compload(elm) {
+            $('#filesel').text('File Selected: ' + elm.files.item(0).name);
+            $('#filesel').show();
+        }
+
+        $('#upload').on('submit', function (e) {
+            e.preventDefault();
+            $('#uploaded').show();
+            var form = $('#upload');
+            var formdata = new FormData(form[0])
+            $.ajax({
+                url: form.attr("action"),
+                data: formdata,
+                type: 'POST',
+                contentType: false,
+                cache: false,
+                processData: false,
+                success: function (resp) {
+                    if (resp.result === 'False') {
+                        $("#uploaderror").show();
+                    } else {
+                        $("#uploadsuccess").show();
+                    }
+                }
+            });
+            return false;
+        })
     </script>
-    </div>
+
 {% endblock dashcontent %}

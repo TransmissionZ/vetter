@@ -230,8 +230,10 @@
                 if ($(this).val() == "sup" || $(this).val() == "cat") {
                     if ($(this).val() == 'sup') {
                         var options = '<option value="">Select Supplier</option>';
+                        options += '<option value="all">All Suppliers</option>';
                     } else if ($(this).val() == 'cat') {
                         var options = '<option value="">Select Category</option>';
+                        options += '<option value="all">All Category</option>';
                     }
                     $("#skuinput").hide();
                     $("#supcatdiv").show();

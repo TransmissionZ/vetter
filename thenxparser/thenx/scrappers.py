@@ -21,7 +21,6 @@ class gsmnet():
         print("Grabbing value")
 
     def scrap(self):
-        print("called")
         count = 0
         while True:
             count += 1
@@ -206,7 +205,12 @@ class servicepack():
                 s = soup(response.text, 'html.parser')
                 p = s.find('p', class_='price').text
                 p = p.replace(',', '.').replace('RON', '').replace('LEI', '').replace('lei', '').replace('Lei', '').strip()
-                return float(p)
+                try:
+                    p = float(p)
+                except:
+                    n = p.find('–')
+                    p = float(p[:n].strip())
+                return p
             except Exception as e:
                 print(e)
                 continue
@@ -233,7 +237,6 @@ class distrizone():
                 p = p.replace(',', '.').replace('RON', '').replace('LEI', '').replace('lei', '').replace('Lei', '').strip()
                 n = p.count('.')
                 if n == 2:
-                    print('reached')
                     p = p.replace('.', '', 1)
 
                 return float(p)

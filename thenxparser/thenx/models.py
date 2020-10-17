@@ -43,6 +43,11 @@ class Product(models.Model):
             self.lowestcompprice = min(p for p in prices)
             self.avgcompprice = sum(prices) / len(prices)
             self.save()
+        else:
+            self.highestcompprice = 0.0
+            self.lowestcompprice = 0.0
+            self.avgcompprice = 0.0
+            self.save()
 
     def __str__(self):
         return self.name
@@ -82,7 +87,7 @@ class Price_List(models.Model):
     margin_shop = models.FloatField(default=0.0)
 
     def __str__(self):
-        return str(self.finalprice)
+        return str(self.product.SKU)
 
     def save(self, *args, **kwargs):
         self.product.oldprice = self.finalprice
@@ -104,6 +109,7 @@ class Price_List(models.Model):
                 self.finalprice *= 1 + self.localcostthenx / 100
         if self.vat != 0.0:
             self.finalprice *= 1 + (self.vat / 100)
+
         self.allproductcost = self.finalprice
         if self.wspricetype == self.RON and self.wsprice != 0.0:
             self.finalprice += self.wsprice
@@ -111,6 +117,7 @@ class Price_List(models.Model):
             if self.wsprice != 0.0:
                 self.finalprice *= 1 + self.wsprice / 100
         self.finalprice = normal_round(self.finalprice)
+
         if self.retailpricetype == self.RON and self.retailprice != 0.0:
             self.finalprice += self.retailprice
         else:
@@ -121,6 +128,8 @@ class Price_List(models.Model):
         self.finalprice = self.finalprice - 0.01
         self.gpws = self.allproductcost - self.wsprice
         self.margin_ws = normal_round(((self.finalprice - self.allproductcost) / self.finalprice) * 100)
+        self.gp_shop = self.finalprice - self.allproductcost
+        self.margin_shop = (self.finalprice - self.allproductcost)/self.finalprice
         return super(Price_List, self).save(*args, **kwargs)
 
 
@@ -162,7 +171,6 @@ class Competitor_URL(models.Model):
             print("BRAND NOT AVAILABLE FOR " + str(self.url))
         price = ob.scrap()
         self.comp_price = price
-        print(self.comp_price)
         self.save()
 
     def save(self, *args, **kwargs):
@@ -273,7 +281,7 @@ class pricelistrules(models.Model):
     localcosttype = models.CharField(max_length=15, choices=OPTIONS, default=SUP)
     localcost = models.FloatField(default=0.0)
     type = models.CharField(max_length=4, choices=TYPE_CHOICE, default=RON)
-    ifsuppriceis = models.CharField(max_length=7, choices=HLCHOICES, default=HIGH)
+    ifsuppriceis = models.CharField(max_length=10, choices=HLCHOICES, default=HIGH)
     than = models.FloatField(default=0.0)
     thantype = models.CharField(max_length=4, choices=TYPE_CHOICE, default=RON)
     supplier = models.TextField(default='')
@@ -317,3 +325,7 @@ class competitorrules(models.Model):
     butnotlowerthantype = models.CharField(max_length=4, choices=TYPE_CHOICE, default=RON)
     appliedon = models.CharField(max_length=3, choices=CHOICES, default=SKU)
     value = models.TextField(default='')
+
+class UploadCompetitors(models.Model):
+    upload_file = models.FileField()
+    upload_date = models.DateTimeField(auto_now_add=True)

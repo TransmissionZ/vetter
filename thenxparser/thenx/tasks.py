@@ -2,31 +2,56 @@ from __future__ import absolute_import, unicode_literals
 import requests
 import json
 from django.utils import timezone
-from .models import Product, pricelistrules, marginrules, warrantyrules, competitorrules
+from .models import Product, pricelistrules, marginrules, warrantyrules, competitorrules, UploadCompetitors
 from django.db.models import Count
 from bs4 import BeautifulSoup as soup
 from huey import crontab
-from huey.contrib.djhuey import periodic_task, task, db_task
+import huey
+from huey.contrib.djhuey import periodic_task, task, db_task, db_periodic_task
 import random
 import pytz
+import http.client
+import csv
+
+@db_task()
+def upload_comps():
+    p = UploadCompetitors.objects.latest('pk')
+    print(p.upload_file.path)
+    with open(p.upload_file.path, 'rt', encoding="utf8") as f_input:
+        csv_input = csv.reader(f_input)
+        for idx, r in enumerate(csv_input):
+            if idx == 0:
+                continue
+            r = [i for i in r if i]
+            for i, link in enumerate(r):
+                if i == 0:
+                    sku = link
+                else:
+                    p = Product.objects.filter(SKU=sku).first()
+                    if p.competitor_url_set.filter(url=link).count() == 0:
+                        c = p.competitor_url_set.create(url=link)
+                        c.scrap()
+                        p.update_competitorprices()
 
 
-# @periodic_task(
-#     run_every=(crontab(minute='*/1')),
-#     name="updatedb",
-#     ignore_result=True
-# )
-@task()
+@db_periodic_task(crontab(minute='*/30'))
 def UpdateDB():
     print("Updating Database")
-    url = 'http://dev.thenx.net/rest/V1/thenx/prfeed/'
+    conn = http.client.HTTPSConnection("thenx.net")
+
     headers = {
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer 7h5om9dna1pljz1mkbwqr4pzxcih1m79',
+        'cache-control': "no-cache",
     }
-    r = requests.get(url, headers=headers)
-    print("Data Read")
-    a = json.loads(r.json())
+
+    conn.request("GET", "/rest/V1/thenx/prfeed/", headers=headers)
+
+    res = conn.getresponse()
+    data = res.read()
+
+    r = data.decode('utf-8')
+    conn.close()
+    a = json.loads(json.loads(r))
+    
     # Product.objects.all().delete()
     # Code for deleting Duplicates
     rem_dup = Product.objects.values('SKU').annotate(SKU_count=Count('SKU')).filter(SKU_count__gt=1)
@@ -41,7 +66,6 @@ def UpdateDB():
         count += 1
         if count % 500 == 0:
             print("Products done: " + str(count))
-            print(cat)
         p = Product.objects.filter(SKU=product["sku"]).first()
         if p:
             if p.price != product['price']:
@@ -148,7 +172,9 @@ def update_pricelist(localcosttype, localcost, type, ifsuppriceis,than, thantype
     if appliedon == "sku":
         plist = Product.objects.filter(SKU=value)
     else:
-        if appliedon == "cat":
+        if value == "all":
+            plist = Product.objects.all()
+        elif appliedon == "cat":
             plist = Product.objects.filter(category__icontains=value)
         else:
             plist = Product.objects.filter(supplier__icontains=value)
@@ -194,11 +220,11 @@ def update_competitor(priceshouldbe, than, thantype, thanHL, competitor, butnotl
         competitors = [i for sub in competitors for i in sub]
         if competitors:
             if thanHL == "highest":
-                competitorprice = max(sub for sub in competitors)
+                competitorprice = p.highestcompprice # max(sub for sub in competitors)
             elif thanHL == "cheapest":
-                competitorprice = min(sub for sub in competitors)
+                competitorprice = p.lowestcompprice # min(sub for sub in competitors)
             else:
-                competitorprice = sum(competitors)/len(competitors)
+                competitorprice = p.avgcompprice # sum(competitors)/len(competitors)
         else:
             continue
 
@@ -327,3 +353,7 @@ def set_default_warranty(ruleid):
             ob.warranty = 0
             ob.save()
     o.delete()
+
+@task()
+def ExportChangedPrices():
+    pass

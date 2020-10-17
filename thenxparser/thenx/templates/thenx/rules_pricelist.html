@@ -107,8 +107,8 @@
                                           method="post">
                                         {% csrf_token %}
                                         Add local cost {{ r.localcosttype }} of {{ r.localcost }} {{ r.type }} if supplier
-                                        price is {{ r.ifsuppriceis }} than {{ r.than }}{{ r.thantype }} for supplier:
-                                        {{ r.supplier }}
+                                        price is {{ r.ifsuppriceis }} than {{ r.than }}{{ r.thantype }} for {% if r.appliedon == "sup" %} Supplier {% elif r.appliedon == "cat" %}
+                                        Category {% else %} Product SKU {% endif %}: {{ r.value }}
 
                                         <button class="item" data-toggle="tooltip" data-placement="top" title="Delete">
                                             <i class="zmdi zmdi-delete"></i>

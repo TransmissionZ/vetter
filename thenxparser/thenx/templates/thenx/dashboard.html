@@ -209,9 +209,9 @@
                     <tbody>
                     {% for p in list %}
                         <tr>
-                            <td><a href="{% url 'thenx:specificproduct' p.SKU %}" style="color: grey">{{ p.SKU }}</a>
+                            <td><a>{{ p.SKU }}</a>
                             </td>
-                            <td><a href="{{ p.originalurl }}">{{ p.name }}</a></td>
+                            <td><a href="{% url 'thenx:specificproduct' p.SKU %}">{{ p.name }}</a></td>
                             <td>{{ p.brand }}</td>
                             <td class="process">
                                 {% for c in p.competitor_url_set.all %} {{ c.comp_name }}
