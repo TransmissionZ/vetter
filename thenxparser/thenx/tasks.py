@@ -38,7 +38,7 @@ def upload_comps():
                             print("R")
                             set_default_competitorprice(o.pk)
 
-@db_periodic_task(crontab(minute='*/30'))
+@db_periodic_task(crontab(minute='*/60'))
 def UpdateDB():
     print("Updating Database")
     conn = http.client.HTTPSConnection("thenx.net")
@@ -56,7 +56,7 @@ def UpdateDB():
     conn.close()
     a = json.loads(json.loads(r))
     
-    # Product.objects.all().delete()
+    Product.objects.all().delete()
     # Code for deleting Duplicates
     rem_dup = Product.objects.values('SKU').annotate(SKU_count=Count('SKU')).filter(SKU_count__gt=1)
     for data in rem_dup:
