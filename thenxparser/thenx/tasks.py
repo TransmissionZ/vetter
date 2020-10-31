@@ -3,7 +3,7 @@ import requests
 import json
 from django.utils import timezone
 from .models import Product, pricelistrules, marginrules, warrantyrules, competitorrules, UploadCompetitors
-from django.db.models import Count
+from django.db.models import Count, Q
 from bs4 import BeautifulSoup as soup
 from huey import crontab
 import huey
@@ -16,7 +16,6 @@ import csv
 @db_task()
 def upload_comps():
     p = UploadCompetitors.objects.latest('pk')
-    print(p.upload_file.path)
     with open(p.upload_file.path, 'rt', encoding="utf8") as f_input:
         csv_input = csv.reader(f_input)
         for idx, r in enumerate(csv_input):
@@ -32,7 +31,12 @@ def upload_comps():
                         c = p.competitor_url_set.create(url=link)
                         c.scrap()
                         p.update_competitorprices()
-
+                        print("R!")
+                        for o in competitorrules.objects.filter(Q(appliedon="sup", value__icontains=p.supplier) |
+                                            Q(appliedon='cat', value__icontains=p.category) |
+                                            Q(appliedon='sku', value=p.SKU)):
+                            print("R")
+                            set_default_competitorprice(o.pk)
 
 @db_periodic_task(crontab(minute='*/30'))
 def UpdateDB():
@@ -260,7 +264,6 @@ def set_default_competitorprice(ruleid):
     o = competitorrules.objects.get(pk=ruleid)
     appliedon = o.appliedon
     value = o.value
-    o.delete()
     if appliedon == "sku":
         plist = Product.objects.filter(SKU=value)
     else:
@@ -270,10 +273,59 @@ def set_default_competitorprice(ruleid):
             plist = Product.objects.filter(supplier__icontains=value)
 
     for p in plist:
-        o = p.price_list_set.first()
-        if o.competitorprice != 0.0:
-            o.competitorprice = 0.0
-            o.save()
+        finalprice = p.price_list_set.first().finalprice
+        if o.competitor == "all":
+            competitors = list(p.competitor_url_set.all().values_list("comp_price"))
+        else:
+            o.competitor = int(o.competitor)
+            if o.competitor > p.competitor_url_set.all().count():
+                o.competitor = p.competitor_url_set.all().count()
+
+            totalcomps = p.competitor_url_set.all().values_list('id')
+            rand = list(random.sample(list(totalcomps), min(len(totalcomps), o.competitor)))
+            rand = [i for sub in rand for i in sub]
+            competitors = p.competitor_url_set.filter(id__in=rand)
+            competitors = list(competitors.values_list('comp_price'))
+
+        competitors = [i for sub in competitors for i in sub]
+        if competitors:
+            if o.thanHL == "highest":
+                competitorprice = p.highestcompprice  # max(sub for sub in competitors)
+            elif o.thanHL == "cheapest":
+                competitorprice = p.lowestcompprice  # min(sub for sub in competitors)
+            else:
+                competitorprice = p.avgcompprice  # sum(competitors)/len(competitors)
+        else:
+            continue
+
+        if o.butnotlowerthantype == "RON":
+            calcprice = finalprice + o.butnotlowerthan
+        else:
+            calcprice = finalprice * (1 + (o.butnotlowerthan / 100))
+
+        if o.thantype == "RON":
+            if o.priceshouldbe == "higher":
+                newprice = competitorprice + o.than
+            elif o.priceshouldbe == "cheaper":
+                newprice = competitorprice - o.than
+        else:
+            if o.priceshouldbe == "higher":
+                newprice = competitorprice * (1 + (o.than / 100))
+            elif o.priceshouldbe == "cheaper":
+                newprice = competitorprice * (1 - (o.than / 100))
+
+        if newprice < calcprice:
+            fprice = calcprice
+        else:
+            fprice = newprice
+        print("FPRICE: " + str(fprice))
+        p2 = p.price_list_set.first()
+        p2.competitorprice = fprice
+        p2.save()
+        # o = p.price_list_set.first()
+        # if o.competitorprice != 0.0:
+        #     o.competitorprice = 0.0
+        #     o.save()
 
 def set_default_pricelist(ruleid):
     o = pricelistrules.objects.get(pk=ruleid)

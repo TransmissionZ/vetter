@@ -129,7 +129,6 @@
     <div class="row m-t-30">
         <div class="col-md-12">
             <div class="table-data__tool-left" style="padding-left: 2%">
-
                 <h3 class="title-5 m-b-35">products summary</h3>
                 <div class="rs-select2--light rs-select2--md">
                     <form value="{{ request.GET.brand }}" method="GET" id="brandform">
@@ -175,9 +174,14 @@
                         <div class="dropDownSelect2"></div>
                     </form>
                 </div>
-                <div class="table-data__tool-right">
-                    <form class="row form-header" value="{{ request.GET.q }}" method="GET"
-                          style="position:absolute; padding-right: 2%; right: 1%;">
+
+                <div class="rs-select2--light rs-select2--md" style="width: 300px">
+                    <a class="btn btn-warning" href="{% url 'thenx:downloadpricelist' %}" download>
+                    <i class="fa fa-map-marker"></i>&nbsp; Export Price List</a>
+                </div>
+
+                <div class="rs-select2--dark rs-select2--dark2" style="position: absolute; right: 2.5%">
+                    <form class="row form-header" value="{{ request.GET.q }}" method="GET">
                         {#                    {% csrf_token %}#}
                         <input class="au-input au-input--xl" type="text" name="q" value="{{ request.GET.q }}"
                                placeholder="Search for Products..."/>
@@ -188,8 +192,6 @@
                 </div>
             </div>
 
-            <br>
-            <br>
             <br>
             <!-- DATA TABLE-->
             <div class="table-responsive m-b-40">
@@ -263,7 +265,7 @@
         </nav>
         {#    </span>#}
     </div>
-
+    <iframe id="my_iframe" style="display:none;"></iframe>
     <script>
         $(function () {
             try {
@@ -321,6 +323,19 @@
             } catch (error) {
                 console.log(error);
             }
-        })
+        });
+        function downloadpricelist(){
+            console.log("HELLLOO");
+            var url = {% url 'thenx:downloadpricelist' %};
+            console.log(url);
+            document.getElementById('my_iframe').src = url;
+
+            {#const http = new XMLHttpRequest();#}
+            {#http.open("GET", "{% url 'thenx:downloadpricelist' %}");#}
+            {#http.send();#}
+            {#$.getJSON("{% url 'thenx:downloadpricelist' %}", {'choice': 1}, function (j) {#}
+            {#    #}
+            {# });#}
+        }
     </script>
 {% endblock dashcontent %}

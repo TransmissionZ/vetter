@@ -25,5 +25,6 @@ urlpatterns = [
     path('rules/getDetails/', views.getDetails, name='details'),
     path('validatesku/', views.validateSKU, name='validatesku'),
     path('dashboard/rules/delete/(<ruleid>)/(<rule>)', views.deleterule, name='deleterule'),
-    path('dashboard/products/uploadcompetitors/', views.competitors_upload, name='uploadcomp')
+    path('dashboard/products/uploadcompetitors/', views.competitors_upload, name='uploadcomp'),
+    path('dashboard/downloadpricelist/', views.downloadpricelist, name='downloadpricelist')
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

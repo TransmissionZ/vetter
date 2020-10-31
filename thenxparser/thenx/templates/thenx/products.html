@@ -186,41 +186,46 @@
                                 {% else %}N/A{% endif %}
                                     <br>
                                     All Product Cost: {% if p.price_list_set.first.allproductcost != 0.0 %}
-                                    {{ p.price_list_set.first.allproductcost }}
+                                    {{ p.price_list_set.first.allproductcost|floatformat:2 }}
                                 {% else %}N/A{% endif %}
                                     <br>
-                                    Wholesale Price: {% if p.price_list_set.first.wsprice != 0.0 %}
-                                    {{ p.price_list_set.first.wsprice }} {{ p.price_list_set.first.wspricetype }}
+                                    Wholesale Margin: {% if p.price_list_set.first.wsprice != 0.0 %}
+                                    {{ p.price_list_set.first.wsprice }}
+                                    {{ p.price_list_set.first.wspricetype }}
                                 {% else %}N/A{% endif %}
                                     <br>
-                                    {#                                Shop Price Margin: {% if p.price_list_set.first.margin_shop != 0.0 %}#}
-                                    {#                                    {{ p.price_list_set.first.margin_shop }}#}
-                                    {#                                    {% else %}N/A{% endif %}#}
-                                    {#                                <br>#}
-                                    Retail Price: {% if p.price_list_set.first.retailprice != 0.0 %}
-                                    {{ p.price_list_set.first.retailprice }}
-                                    {{ p.price_list_set.first.retailpricetype }}
+                                    Wholesale Price: {% if p.price_list_set.first.wspricefinal != 0.0 %}
+                                    {{ p.price_list_set.first.wspricefinal|floatformat:2 }}
+                                {% else %}N/A{% endif %}
+                                    <br>
+                                    Shop Price Margin: {% if p.price_list_set.first.retailprice != 0.0 %}
+                                        {{ p.price_list_set.first.retailprice }}
+                                        {{ p.price_list_set.first.retailpricetype }}
+                                        {% else %}N/A{% endif %}
+                                    <br>
+                                    Retail Price: {% if p.price_list_set.first.retailpricefinal != 0.0 %}
+                                    {{ p.price_list_set.first.retailpricefinal }}
                                 {% else %}N/A{% endif %}
 
                                     <br>
-                                    Gross Profit Wholesale: {% if p.price_list_set.first.gpws != 0.0 %}
-                                    {{ p.price_list_set.first.gpws }}
+                                    Gross Profit Wholesale: {% if p.price_list_set.first.gpws != 0.0 and p.price_list_set.first.gpws > 0.0 and p.price_list_set.first.gpws != p.price_list_set.first.allproductcost%}
+                                    {{ p.price_list_set.first.gpws|floatformat:2 }}
                                 {% else %}N/A{% endif %}
                                     <br>
-                                    Margin Wholesale: {% if p.price_list_set.first.margin_ws != 0.0 %}
+                                    Margin Wholesale: {% if p.price_list_set.first.margin_ws != 0.0 and p.price_list_set.first.margin_ws > 0.0 %}
                                     {{ p.price_list_set.first.margin_ws }} %
                                 {% else %}N/A{% endif %}
                                     <br>
-                                    Gross Profit Shop: {% if p.price_list_set.first.gp_shop != 0.0 %}
-                                    {{ p.price_list_set.first.gp_shop }}
+                                    Gross Profit Shop: {% if p.price_list_set.first.gp_shop != 0.0 and p.price_list_set.first.gp_shop > 0.0 %}
+                                    {{ p.price_list_set.first.gp_shop|floatformat:2 }}
                                 {% else %}N/A{% endif %}
                                     <br>
-                                    Shop Margin: {% if p.price_list_set.first.margin_shop != 0.0 %}
-                                    {{ p.price_list_set.first.margin_shop }}
+                                    Shop Margin: {% if p.price_list_set.first.margin_shop != 0.0 and p.price_list_set.first.margin_shop > 0.0 %}
+                                    {{ p.price_list_set.first.margin_shop|floatformat:2 }}
                                 {% else %}N/A{% endif %}
                                     <br>
                                     <br>
-                                    Shop Price: {% if p.price_list_set.first.finalprice != 0.0 %}
+                                    Shop Price: {% if p.price_list_set.first.finalprice != 0.0 and p.price_list_set.first.finalprice > 0.0 %}
                                     {{ p.price_list_set.first.finalprice }}
                                 {% else %}N/A{% endif %}
                                 </p>

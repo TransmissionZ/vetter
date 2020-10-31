@@ -4,8 +4,9 @@ from datetime import datetime
 from django.utils import timezone
 from .scrappers import *
 from django_mysql.models import JSONField
+from django.db.models import Q
 import math
-# from .tasks import updatevat
+# from .tasks import set_default_competitorprice
 from huey.contrib.djhuey import periodic_task, task
 # Create your models here.
 
@@ -74,10 +75,12 @@ class Price_List(models.Model):
     localcostsuppliertype = models.CharField(max_length=3, choices=TYPE_CHOICE, default=RON)
     localcostthenx = models.FloatField(default=0.0)
     localcostthenxtype = models.CharField(max_length=4, choices=TYPE_CHOICE, default=RON)
-    wsprice = models.FloatField(default=0.0)  # Whole Sale
+    wspricefinal = models.FloatField(default=0.0)
     wspricetype = models.CharField(max_length=4, choices=TYPE_CHOICE, default=RON)
+    wsprice = models.FloatField(default=0.0)  # Whole Sale
     retailprice = models.FloatField(default=0.0)
     retailpricetype = models.CharField(max_length=4, choices=TYPE_CHOICE, default=RON)
+    retailpricefinal = models.FloatField(default=0.0)
     warranty = models.IntegerField(default=0)
     vat = models.FloatField(default=0.0)
     allproductcost = models.FloatField(default=0.0)
@@ -111,23 +114,27 @@ class Price_List(models.Model):
             self.finalprice *= 1 + (self.vat / 100)
 
         self.allproductcost = self.finalprice
-        if self.wspricetype == self.RON and self.wsprice != 0.0:
+        if self.wspricetype == self.RON and self.wsprice > 0.0:
             self.finalprice += self.wsprice
+            self.wspricefinal = self.allproductcost + self.wsprice
         else:
-            if self.wsprice != 0.0:
+            if self.wsprice > 0.0:
                 self.finalprice *= 1 + self.wsprice / 100
+                self.wspricefinal = self.allproductcost * (1+self.wsprice/100)
         self.finalprice = normal_round(self.finalprice)
 
-        if self.retailpricetype == self.RON and self.retailprice != 0.0:
+        if self.retailpricetype == self.RON and self.retailprice > 0.0:
             self.finalprice += self.retailprice
+            self.retailpricefinal = self.allproductcost + self.retailprice
         else:
-            if self.retailprice != 0.0:
+            if self.retailprice > 0.0:
                 self.finalprice *= 1 + self.retailprice / 100
+                self.retailpricefinal = self.allproductcost*(1+self.retailprice/100)
 
-        self.finalprice = normal_round(self.finalprice)
+        self.finalprice = normal_round(self.retailpricefinal)
         self.finalprice = self.finalprice - 0.01
-        self.gpws = self.allproductcost - self.wsprice
-        self.margin_ws = normal_round(((self.finalprice - self.allproductcost) / self.finalprice) * 100)
+        self.gpws = self.wspricefinal - self.allproductcost
+        self.margin_ws = normal_round(((self.wspricefinal - self.allproductcost) / self.wspricefinal) * 100)
         self.gp_shop = self.finalprice - self.allproductcost
         self.margin_shop = (self.finalprice - self.allproductcost)/self.finalprice
         return super(Price_List, self).save(*args, **kwargs)
@@ -329,3 +336,7 @@ class competitorrules(models.Model):
 class UploadCompetitors(models.Model):
     upload_file = models.FileField()
     upload_date = models.DateTimeField(auto_now_add=True)
+
+# class PriceListsFiles(models.Model):
+#     upload_file = models.FileField()
+#     upload_date = models.DateTimeField(auto_now_add=True)

@@ -13,6 +13,7 @@ from django.urls import reverse
 from django.contrib import messages
 from datetime import timedelta
 import json
+import io
 from django.core.files.storage import FileSystemStorage
 
 # For login required @login_required(login_url='thenx:login')
@@ -286,6 +287,12 @@ def deleteurl(request, urlid=None, pid=None):
     p = o.product
     o.delete()
     p.update_competitorprices()
+
+    for o in competitorrules.objects.filter(Q(appliedon="sup", value__icontains=p.supplier) |
+                                            Q(appliedon='cat', value__icontains=p.category) |
+                                            Q(appliedon='sku', value=p.SKU)):
+        set_default_competitorprice(o.pk)
+
     dict = request.POST.dict()
     if 'q' in request.POST:
         return HttpResponseRedirect(reverse('thenx:products') + "?q=" + dict['q'])
@@ -548,6 +555,34 @@ def getDetails(request):
         result_set = []
     return HttpResponse(json.dumps(result_set), content_type='application/json')
 
+def downloadpricelist(request):
+    plist = Price_List.objects.all()
+    pricelistcsv = "SKU,Categories,Description,Supplier Name,Supplier Price,Local Cost Supplier," \
+                   "Local Cost ThenX,VAT,All Product Cost,Margin Wholesale,Wholesale Price,Margin Shop Price," \
+                   "Retail Price,Gross Profit WholeSale,Margin Wholesale,Gross Profit Shop,Margin Shop\n"
+    for p in plist:
+        try:
+            grossprofitshop = p.retailprice - p.allproductcost
+        except:
+            grossprofitshop = 0.0
+        cats = p.product.category
+        cats = cats.split(',')
+        cats = [c.strip() for c in cats]
+        cats = ' | '.join(cats)
+        desc = p.product.name
+        desc = desc.replace(',', '-')
+        supplier = p.product.supplier.replace(', ', ' - ')
+        pricelistcsv += f"{p.product.SKU},{cats},{desc},{supplier}," \
+                        f"{p.product.base_cost},{p.localcostsupplier}," \
+                        f"{p.localcostthenx},{p.vat},{p.allproductcost},{p.wsprice}," \
+                        f"{p.wspricefinal}," \
+                        f"{p.retailprice},{p.retailpricefinal},{p.gpws},{p.margin_ws},{grossprofitshop},{p.margin_shop}\n"
+    obj = io.StringIO()
+    obj.write(pricelistcsv)
+    obj.seek(0)
+    response = HttpResponse(obj.read(), content_type='text/csv')
+    response['Content-Disposition'] = 'attachment; filename="ThenX PriceList ' + str(datetime.now().date()) + '.csv"'
+    return response
 
 def validateSKU(request):
     sku = request.GET.get('sku')
