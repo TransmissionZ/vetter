@@ -38,7 +38,7 @@ def upload_comps():
                             print("R")
                             set_default_competitorprice(o.pk)
 
-@db_periodic_task(crontab(minute='*/180'))
+@db_periodic_task(crontab(hour='24')) # minute='*/180'
 def UpdateDB():
     print("Updating Database")
     conn = http.client.HTTPSConnection("dev.thenx.net")
