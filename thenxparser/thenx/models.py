@@ -131,12 +131,15 @@ class Price_List(models.Model):
                 self.finalprice *= 1 + self.retailprice / 100
                 self.retailpricefinal = self.allproductcost*(1+self.retailprice/100)
 
-        self.finalprice = normal_round(self.retailpricefinal)
+        if self.retailpricefinal:
+            self.finalprice = normal_round(self.retailpricefinal)
         self.finalprice = self.finalprice - 0.01
-        self.gpws = self.wspricefinal - self.allproductcost
-        self.margin_ws = normal_round(((self.wspricefinal - self.allproductcost) / self.wspricefinal) * 100)
-        self.gp_shop = self.finalprice - self.allproductcost
-        self.margin_shop = (self.finalprice - self.allproductcost)/self.finalprice
+        if self.wspricefinal > 0:
+            self.gpws = self.wspricefinal - self.allproductcost
+            self.margin_ws = normal_round(((self.wspricefinal - self.allproductcost) / self.wspricefinal) * 100)
+        if self.finalprice > 0:
+            self.gp_shop = self.finalprice - self.allproductcost
+            self.margin_shop = (self.finalprice - self.allproductcost)/self.finalprice
         return super(Price_List, self).save(*args, **kwargs)
 
 

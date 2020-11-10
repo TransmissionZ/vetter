@@ -596,20 +596,20 @@ def validateSKU(request):
 
 def deleterule(request, ruleid, rule):
     if rule == "margin":
-        set_default_margin(ruleid)
+        set_default_margin(ruleid, True)
         return redirect("thenx:marginsrules")
     elif rule == "parser":
-        set_default_competitorprice(ruleid)
+        set_default_competitorprice(ruleid, True)
         return redirect("thenx:parserrules")
     elif rule == "pricelist":
-        set_default_pricelist(ruleid)
+        set_default_pricelist(ruleid, True)
         return redirect("thenx:pricelistrules")
     elif rule == "vat":
         vatrules.objects.get(pk=ruleid).delete()
-        set_default_vat()
+        set_default_vat(True)
         return redirect("thenx:vatrules")
     elif rule == "warranty":
-        set_default_warranty(ruleid)
+        set_default_warranty(ruleid, True)
         return redirect("thenx:warrantyrules")
     else:
         print("Error")

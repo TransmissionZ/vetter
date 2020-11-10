@@ -415,7 +415,7 @@
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-                        <button type="submit" class="btn btn-primary">Confirm</button>
+                        <button type="submit" class="btn btn-primary" id="modalsubmit">Confirm</button>
                     </div>
                 </form>
             </div>
@@ -452,10 +452,13 @@
         });
 
         function compload(elm) {
+            $('#modalsubmit').prop('disabled', false);
             $('#filesel').text('File Selected: ' + elm.files.item(0).name);
             $('#filesel').show();
         }
-
+        $('#modalsubmit').on('click', function (e){
+                $('#modalsubmit').prop('disabled', true);
+        })
         $('#upload').on('submit', function (e) {
             e.preventDefault();
             $('#uploaded').show();
