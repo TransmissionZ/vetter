@@ -18,6 +18,8 @@ from django.core.files.storage import FileSystemStorage
 
 # For login required @login_required(login_url='thenx:login')
 def index(request):
+    if request.user.is_authenticated:
+        return redirect('thenx:dashboard')
     return redirect("thenx:login")
 
 

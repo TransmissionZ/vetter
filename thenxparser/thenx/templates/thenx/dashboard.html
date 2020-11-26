@@ -177,7 +177,7 @@
 
                 <div class="rs-select2--light rs-select2--md" style="width: 300px">
                     <a class="btn btn-warning" href="{% url 'thenx:downloadpricelist' %}" download>
-                    <i class="fa fa-map-marker"></i>&nbsp; Export Price List</a>
+                    <i class="fa fa-map-marker"></i>&nbsp;Export Price List</a>
                 </div>
 
                 <div class="rs-select2--dark rs-select2--dark2" style="position: absolute; right: 2.5%">
@@ -265,7 +265,6 @@
         </nav>
         {#    </span>#}
     </div>
-    <iframe id="my_iframe" style="display:none;"></iframe>
     <script>
         $(function () {
             try {
@@ -278,7 +277,7 @@
                         type: 'pie',
                         data: {
                             datasets: [{
-                                data: [{{ imcheapest }}, {{ imcheaper }}, {{ imaverage }}, {{ imhigher }}, {{ imhighest}}, {{ imequal }}],
+                                data: [{{ imcheapest }}, {{ imcheaper }}, {{ imaverage }}, {{ imhigher }}, {{ imhighest }}, {{ imequal }}],
                                 backgroundColor: [
                                     "rgba(62, 51, 204, 1)",
                                     "rgba(255, 125, 0, 0.8)",
@@ -324,18 +323,5 @@
                 console.log(error);
             }
         });
-        function downloadpricelist(){
-            console.log("HELLLOO");
-            var url = {% url 'thenx:downloadpricelist' %};
-            console.log(url);
-            document.getElementById('my_iframe').src = url;
-
-            {#const http = new XMLHttpRequest();#}
-            {#http.open("GET", "{% url 'thenx:downloadpricelist' %}");#}
-            {#http.send();#}
-            {#$.getJSON("{% url 'thenx:downloadpricelist' %}", {'choice': 1}, function (j) {#}
-            {#    #}
-            {# });#}
-        }
     </script>
 {% endblock dashcontent %}
